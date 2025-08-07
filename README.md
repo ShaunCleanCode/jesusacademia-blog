@@ -1,36 +1,188 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 예수서원 블로그
 
-## Getting Started
+복음과 지성의 통합을 추구하는 기독교 인문학 아카데미, 예수서원의 공식 블로그입니다.
 
-First, run the development server:
+## 🎯 프로젝트 목표
+
+- **AI-first 방식**: GPT를 활용한 자동 콘텐츠 생성
+- **다국어 지원**: 한국어 중심의 다국어 블로그
+- **SEO 최적화**: 구조화 데이터와 메타 정보 포함
+- **미니 CMS**: 추후 Nest.js 연동을 통한 콘텐츠 관리
+
+## 🛠️ 기술 스택
+
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS + @tailwindcss/typography
+- **UI Components**: Custom Components (HighlightBox, AvatarCard, PrimaryButton)
+- **SEO**: Next.js Metadata API + Schema.org 구조화 데이터
+- **Icons**: Lucide React
+- **Animations**: CSS Animations + Tailwind
+
+## 📁 프로젝트 구조
+
+```
+jesusacademia-blog/
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx          # 루트 레이아웃 (SEO 메타데이터 포함)
+│   │   ├── page.tsx            # 홈페이지
+│   │   └── blog/
+│   │       └── [slug]/
+│   │           └── page.tsx    # 블로그 포스트 동적 라우트
+│   ├── components/
+│   │   ├── HighlightBox.tsx    # 주요 메시지 강조 컴포넌트
+│   │   ├── AvatarCard.tsx      # 인물 정보 카드
+│   │   └── PrimaryButton.tsx   # CTA 버튼
+│   └── lib/
+│       └── schema.ts           # SEO 스키마 유틸리티
+├── content_input.json          # 블로그 자동 생성용 데이터
+├── tailwind.config.ts          # Tailwind 설정
+└── package.json
+```
+
+## 🚀 시작하기
+
+### 1. 의존성 설치
+
+```bash
+npm install
+```
+
+### 2. 개발 서버 실행
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. 빌드
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+```
 
-## Learn More
+## 🎨 주요 기능
 
-To learn more about Next.js, take a look at the following resources:
+### 1. 홈페이지
+- 예수서원 소개
+- 설립자 고석희 목사 소개
+- Oyster Bay 위치 정보
+- 핵심 가치와 사명
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. 블로그 시스템
+- 동적 라우팅 (`/blog/[slug]`)
+- SEO 최적화 (메타데이터, 구조화 데이터)
+- FAQ 섹션 자동 생성
+- 반응형 디자인
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 3. 컴포넌트 시스템
+- **HighlightBox**: 주요 메시지 강조
+- **AvatarCard**: 인물 정보 표시
+- **PrimaryButton**: CTA 버튼
 
-## Deploy on Vercel
+### 4. SEO 최적화
+- Next.js Metadata API 활용
+- Schema.org 구조화 데이터
+- Open Graph 및 Twitter 카드
+- 한국어 최적화
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📝 Cursor GPT 프롬프트 사용법
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 블로그 글 자동 생성
+
+Cursor의 프롬프트 탭에서 다음 프롬프트를 사용하세요:
+
+```
+🎨 PROJECT CURSOR PROMPT | Blog Generator v2.0
+
+📌 목표: 예수서원 공식 블로그를 Notion 스타일로 자동 생성해주세요.
+
+🧾 기본 명세:
+- 언어: 한국어 (또는 지정 언어)
+- 톤: 정중하고 신뢰감 있는, 성찰적
+- 스타일: Notion 감성 + 현대적 여백 + 애니메이션
+- 출력 포맷: JSX (Next.js 기반 React Server Component)
+- Tailwind 기반 클래스 사용
+- SEO: 구조화 데이터 + meta + hreflang 자동 포함
+
+🗂️ INPUT:
+- title: 고석희 목사와 예수서원
+- keywords: ["예수서원", "고석희 목사", "기독교 인문학"]
+- description: 고석희 목사가 뉴욕에서 시작한 복음+지성 통합 아카데미
+- tone: 성찰적 + 정중함 + 신뢰 중심
+- content:
+  - hero_image: (링크 입력)
+  - sections:
+    - 예수서원의 사명
+    - 고석희 목사의 소개
+    - Oyster Bay 위치의 의미
+    - 훈련 프로그램 소개
+    - 초대의 메시지
+- CTA: "예수서원 프로그램 보러가기"
+- components:
+  - .highlight-box: 주요 메시지 강조
+  - .avatar-card: 인물 카드
+  - .primary-button: CTA 버튼
+
+🛠️ OUTPUT:
+- JSX 컴포넌트 (Next.js 기반)
+- Tailwind 포함된 디자인 구조
+- <Head> SEO 메타 정보 포함
+- schema.org 구조화 데이터 포함
+- 하단에 FAQ schema 자동 삽입
+```
+
+### 사용 예시
+
+1. `content_input.json` 파일을 수정하여 새로운 블로그 글 데이터 준비
+2. Cursor에서 위 프롬프트 사용
+3. 생성된 JSX 코드를 `src/app/blog/[slug]/page.tsx`에 적용
+
+## 🔧 설정 파일
+
+### Tailwind 설정 (`tailwind.config.ts`)
+- Typography 플러그인 포함
+- 커스텀 색상 팔레트 (primary, accent)
+- 애니메이션 설정
+- 반응형 디자인 지원
+
+### SEO 설정 (`src/lib/schema.ts`)
+- BlogPosting 스키마 생성
+- FAQ 스키마 생성
+- 구조화 데이터 유틸리티
+
+## 🚀 배포
+
+### Vercel 배포 (권장)
+
+1. GitHub에 코드 푸시
+2. Vercel에서 프로젝트 연결
+3. 자동 배포 설정
+
+### 환경 변수
+
+```env
+NEXT_PUBLIC_SITE_URL=https://jesusacademia.org
+```
+
+## 🔮 향후 계획
+
+- [ ] Nest.js 기반 CMS 연동
+- [ ] Supabase/Prisma 데이터베이스 연결
+- [ ] 다국어 지원 (영어, 중국어)
+- [ ] 댓글 시스템
+- [ ] 이메일 뉴스레터
+- [ ] Google Search Console 등록
+- [ ] 성능 최적화 (이미지 최적화, 캐싱)
+
+## 📞 문의
+
+- **이메일**: info@jesusacademia.org
+- **위치**: 뉴욕 Oyster Bay
+- **웹사이트**: https://jesusacademia.org
+
+---
+
+© 2024 예수서원. All rights reserved.
