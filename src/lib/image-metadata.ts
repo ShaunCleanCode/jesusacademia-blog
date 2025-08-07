@@ -37,7 +37,6 @@ export interface CampImageCollection {
   };
   participants: {
     count: number;
-    demographics: string[];
   };
 }
 
@@ -150,8 +149,7 @@ export function createCampImageCollection(
       activities: []
     },
     participants: {
-      count: participantCount,
-      demographics: []
+      count: participantCount
     }
   };
 }
