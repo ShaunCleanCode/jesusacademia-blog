@@ -5,6 +5,7 @@ import HighlightBox from '@/components/HighlightBox';
 import AvatarCard from '@/components/AvatarCard';
 import PrimaryButton from '@/components/PrimaryButton';
 import { generateBlogPostSchema, generateFAQSchema, defaultFAQs } from '@/lib/schema';
+import { Youtube, Instagram, Globe, Mail, Phone, MapPin } from 'lucide-react';
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -174,6 +175,76 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <PrimaryButton href="/contact" size="lg">
                   문의하기
                 </PrimaryButton>
+              </div>
+            </div>
+
+            {/* Social Media & Contact Section */}
+            <div className="mt-8 p-8 bg-gray-50 rounded-xl">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">예수서원 공식 채널</h3>
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <a 
+                  href="https://www.youtube.com/user/plumhair388/videos" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 group"
+                >
+                  <Youtube className="w-8 h-8 text-red-500 mr-4 group-hover:scale-110 transition-transform" />
+                  <div>
+                    <h4 className="font-semibold text-gray-900">YouTube</h4>
+                    <p className="text-sm text-gray-600">설교영상 및 강의</p>
+                  </div>
+                </a>
+
+                <a 
+                  href="https://www.instagram.com/jesus_academia/?hl=ko" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 group"
+                >
+                  <Instagram className="w-8 h-8 text-pink-500 mr-4 group-hover:scale-110 transition-transform" />
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Instagram</h4>
+                    <p className="text-sm text-gray-600">일상 및 소식</p>
+                  </div>
+                </a>
+
+                <a 
+                  href="https://www.jesusacademia.org" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 group"
+                >
+                  <Globe className="w-8 h-8 text-blue-500 mr-4 group-hover:scale-110 transition-transform" />
+                  <div>
+                    <h4 className="font-semibold text-gray-900">공식 홈페이지</h4>
+                    <p className="text-sm text-gray-600">강좌일정 및 정보</p>
+                  </div>
+                </a>
+              </div>
+
+              <div className="bg-white rounded-lg p-6 shadow-sm">
+                <h4 className="font-semibold text-gray-900 mb-4 text-center">연락처</h4>
+                <div className="grid md:grid-cols-3 gap-4 text-sm">
+                  <div className="flex items-center">
+                    <Phone className="w-4 h-4 text-primary-600 mr-2" />
+                    <a href="tel:+1-516-277-2082" className="text-gray-700 hover:text-primary-600 transition-colors">
+                      516.277.2082
+                    </a>
+                  </div>
+                  <div className="flex items-center">
+                    <Mail className="w-4 h-4 text-primary-600 mr-2" />
+                    <a href="mailto:JesusChristAcademia@gmail.com" className="text-gray-700 hover:text-primary-600 transition-colors">
+                      JesusChristAcademia@gmail.com
+                    </a>
+                  </div>
+                  <div className="flex items-start">
+                    <MapPin className="w-4 h-4 text-primary-600 mr-2 mt-1 flex-shrink-0" />
+                    <span className="text-gray-700">
+                      1330 Wolver Hollow Rd.<br />
+                      Oyster Bay, NY 11771
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
