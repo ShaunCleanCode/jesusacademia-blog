@@ -35,7 +35,9 @@ jesusacademia-blog/
 │   │   ├── AvatarCard.tsx      # 인물 정보 카드
 │   │   └── PrimaryButton.tsx   # CTA 버튼
 │   └── lib/
-│       └── schema.ts           # SEO 스키마 유틸리티
+│       ├── schema.ts           # SEO 스키마 유틸리티
+│       ├── pastor-ko-profile.md # 고석희 목사 상세 프로필
+│       └── pastor-ko-utils.ts  # 고석희 목사 정보 유틸리티
 ├── content_input.json          # 블로그 자동 생성용 데이터
 ├── tailwind.config.ts          # Tailwind 설정
 └── package.json
