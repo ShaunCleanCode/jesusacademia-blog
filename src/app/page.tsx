@@ -3,33 +3,14 @@ import Link from "next/link";
 import HighlightBox from "@/components/HighlightBox";
 import AvatarCard from "@/components/AvatarCard";
 import PrimaryButton from "@/components/PrimaryButton";
+import HeroSection from "@/components/HeroSection";
 import { Youtube, Instagram, Globe, Mail, Phone, MapPin } from "lucide-react";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 animate-fade-in">
-              예수서원
-            </h1>
-            <p className="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              복음과 지성의 조화로운 통합을 추구하는<br />
-              <span className="text-primary-600 font-semibold">기독교 인문학 아카데미</span>
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <PrimaryButton href="/blog/introduction" size="lg">
-                예수서원 소개 보기
-              </PrimaryButton>
-              <PrimaryButton href="/programs" variant="outline" size="lg">
-                프로그램 둘러보기
-              </PrimaryButton>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* Mission Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
