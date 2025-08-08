@@ -90,6 +90,7 @@ export default function Home() {
             <AvatarCard
               name="고석희 목사"
               title="예수서원 원장"
+              imageUrl="/images/gallery/pastor-ko/pastor-ko-main.jpg"
               description="뉴욕에서의 오랜 목회 경험과 학문적 배경을 통해, 현대인들이 직면한 영적, 지적 도전에 대한 해답을 제시합니다. 깊이 있는 신학적 통찰과 현대 철학에 대한 이해를 바탕으로 복음과 지성의 통합을 실천하고 있습니다."
             />
           </div>
@@ -113,11 +114,14 @@ export default function Home() {
                 하나님의 창조 세계 속에서 진정한 지혜를 탐구할 수 있습니다.
               </p>
             </div>
-            <div className="relative h-64 lg:h-80 rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-6xl mb-4">🌊</div>
-                <p className="text-primary-700 font-medium">Oyster Bay 자연 풍경</p>
-              </div>
+            <div className="relative h-64 lg:h-80 rounded-xl overflow-hidden shadow-lg">
+              <Image
+                src="/images/campus/building-exterior.jpg"
+                alt="뉴욕 Oyster Bay 예수서원 건물 외관 - 울창한 녹색 나무와 아름다운 벽돌 건물"
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
           </div>
         </div>

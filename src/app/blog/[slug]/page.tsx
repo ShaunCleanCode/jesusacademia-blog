@@ -128,12 +128,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </div>
             </div>
             
-            <div className="relative h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg mb-12 bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-8xl mb-6">📖</div>
-                <h2 className="text-2xl font-bold text-primary-800 mb-2">예수서원</h2>
-                <p className="text-primary-600">복음과 지성의 통합</p>
-              </div>
+            <div className="relative h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg mb-12">
+              <Image
+                src="/images/campus/building-exterior.jpg"
+                alt="뉴욕 Oyster Bay 예수서원 건물 외관 - 울창한 녹색 나무와 아름다운 벽돌 건물"
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
           </div>
         </section>
@@ -157,9 +159,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {/* Author Card */}
             <div className="mt-16">
               <AvatarCard
-                name="예수서원"
-                title="기독교 인문학 아카데미"
-                description="복음과 지성의 통합을 추구하는 예수서원입니다. 고석희 목사가 이끄는 이곳에서 깊이 있는 학습과 성찰의 시간을 제공합니다."
+                name="고석희 목사"
+                title="예수서원 원장"
+                imageUrl="/images/gallery/pastor-ko/pastor-ko-main.jpg"
+                description="뉴욕에서의 오랜 목회 경험과 학문적 배경을 통해, 현대인들이 직면한 영적, 지적 도전에 대한 해답을 제시합니다. 깊이 있는 신학적 통찰과 현대 철학에 대한 이해를 바탕으로 복음과 지성의 통합을 실천하고 있습니다."
               />
             </div>
 
