@@ -2,14 +2,13 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Search, MessageCircle, X } from 'lucide-react';
+import { ChevronDown, Search } from 'lucide-react';
 import { faqData, FAQ } from '@/lib/faq-data';
 import DropdownNavigation from '@/components/DropdownNavigation';
 
 export default function FAQPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showChatbot, setShowChatbot] = useState(false);
 
   const filteredFaqs = searchQuery 
     ? faqData.filter(faq => 
@@ -124,78 +123,6 @@ export default function FAQPage() {
           </motion.div>
         )}
       </div>
-
-      {/* 챗봇 버튼 */}
-      <button
-        onClick={() => setShowChatbot(true)}
-        className="fixed bottom-6 right-6 bg-primary-600 text-white p-4 rounded-full shadow-lg hover:bg-primary-700 transition-colors z-30"
-      >
-        <MessageCircle className="w-6 h-6" />
-      </button>
-
-      {/* 챗봇 모달 */}
-      <AnimatePresence>
-        {showChatbot && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-            onClick={() => setShowChatbot(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[600px] overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* 챗봇 헤더 */}
-              <div className="bg-primary-600 text-white p-4 flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <MessageCircle className="w-6 h-6" />
-                  <div>
-                    <h3 className="font-semibold">예수서원 챗봇</h3>
-                    <p className="text-sm text-primary-100">궁금한 점을 물어보세요</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowChatbot(false)}
-                  className="p-1 hover:bg-primary-700 rounded-full"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* 챗봇 콘텐츠 */}
-              <div className="p-4">
-                <div className="bg-gray-100 rounded-lg p-3 mb-4">
-                  <p className="text-sm text-gray-700">
-                    안녕하세요! 예수서원에 대해 궁금한 점이 있으시면 언제든 물어보세요. 
-                    예수서원 소개, 위치, 프로그램, 연락처 등에 대해 답변해드릴 수 있습니다.
-                  </p>
-                </div>
-                
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-600 font-medium">자주 묻는 질문:</p>
-                  {faqData.slice(0, 3).map((faq) => (
-                    <button
-                      key={faq.id}
-                      onClick={() => {
-                        // 여기에 챗봇 로직 추가 예정
-                        alert(`질문: ${faq.question}\n\n답변: ${faq.answer}`);
-                      }}
-                      className="block w-full text-left p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors text-sm"
-                    >
-                      {faq.question}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 } 

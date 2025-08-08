@@ -4,17 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Home, 
-  MessageCircle, 
-  BookOpen, 
-  GraduationCap, 
-  Users, 
-  Info,
-  Menu,
-  X,
-  ChevronDown
-} from 'lucide-react';
+import { Home, MessageCircle, BookOpen, GraduationCap, Users, Info, Menu, X, ChevronDown, Settings } from 'lucide-react';
 
 interface NavItem {
   name: string;
@@ -28,37 +18,43 @@ const navItems: NavItem[] = [
     name: '홈',
     href: '/',
     icon: Home,
-    description: '예수서원 메인'
+    description: '메인 페이지'
   },
   {
-    name: '자주 묻는 질문',
+    name: 'FAQ',
     href: '/faq',
     icon: MessageCircle,
-    description: 'FAQ & 챗봇'
+    description: '자주 묻는 질문'
   },
   {
-    name: '블로그',
-    href: '/blog',
+    name: '챗봇 관리',
+    href: '/admin/chatbot',
+    icon: Settings,
+    description: '챗봇 응답 관리'
+  },
+  {
+    name: '프로그램',
+    href: '/programs',
     icon: BookOpen,
-    description: '소식 & 후기'
+    description: '캠프 프로그램'
   },
   {
     name: '졸업앨범',
     href: '/yearbook',
     icon: GraduationCap,
-    description: '기수별 앨범'
-  },
-  {
-    name: '프로그램',
-    href: '/programs',
-    icon: Users,
-    description: '캠프 & 강의'
+    description: '기수별 졸업앨범'
   },
   {
     name: '소개',
     href: '/about',
-    icon: Info,
+    icon: Users,
     description: '예수서원 소개'
+  },
+  {
+    name: '연락처',
+    href: '/contact',
+    icon: Info,
+    description: '연락처 정보'
   }
 ];
 
@@ -99,27 +95,25 @@ export default function DropdownNavigation() {
               {/* 메뉴 아이템들 */}
               <div className="py-2">
                 {navItems.map((item) => {
-                  const isActive = pathname === item.href;
                   const Icon = item.icon;
+                  const isActive = pathname === item.href;
                   
                   return (
-                    <Link key={item.name} href={item.href} onClick={() => setIsOpen(false)}>
-                      <motion.div
-                        whileHover={{ backgroundColor: isActive ? '#2563eb' : '#f3f4f6' }}
-                        className={`flex items-center space-x-3 px-4 py-3 transition-colors cursor-pointer ${
-                          isActive 
-                            ? 'bg-primary-600 text-white' 
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
-                        <div>
-                          <div className="font-medium">{item.name}</div>
-                          <div className={`text-xs ${isActive ? 'text-white/80' : 'text-gray-500'}`}>
-                            {item.description}
-                          </div>
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors ${
+                        isActive ? 'bg-purple-50 text-purple-700' : 'text-gray-700'
+                      }`}
+                    >
+                      <Icon className={`w-5 h-5 ${isActive ? 'text-purple-600' : 'text-gray-500'}`} />
+                      <div className="flex-1">
+                        <div className={`font-medium ${isActive ? 'text-purple-700' : 'text-gray-900'}`}>
+                          {item.name}
                         </div>
-                      </motion.div>
+                        <div className="text-xs text-gray-500">{item.description}</div>
+                      </div>
                     </Link>
                   );
                 })}
