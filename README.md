@@ -82,6 +82,18 @@ npm run dev
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.
 
+### **Current Status**
+- ✅ 기본 블로그 구조 완성
+- ✅ 실제 이미지 적용 (고석희 목사, 예수서원 건물)
+- ✅ SEO 최적화 완료
+- 🔄 **진행 중**: 인터랙티브 캐러셀 구현 (2025-08-08)
+
+### **Additional Packages**
+```bash
+# Install interactive features
+npm install framer-motion @headlessui/react
+```
+
 ### 3. 빌드
 
 ```bash
