@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import InteractiveImageCarousel from './InteractiveImageCarousel';
 import PrimaryButton from './PrimaryButton';
+import TypingAnimation from './TypingAnimation';
 import { getAllCarouselImages } from '@/lib/carousel-data';
 
 export default function HeroSection() {
@@ -62,7 +63,14 @@ export default function HeroSection() {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="text-lg sm:text-xl text-white/80 max-w-3xl mx-auto leading-relaxed"
           >
-            뉴욕에서 시작한 기독교 인문학 아카데미
+            <TypingAnimation
+              text="뉴욕에서 시작한 기독교 인문변증학 아카데미"
+              speed={150}
+              delay={1.0}
+              className="inline-block"
+              repeat={true}
+              pauseAtEnd={3000}
+            />
           </motion.p>
 
           {/* CTA 버튼들 */}

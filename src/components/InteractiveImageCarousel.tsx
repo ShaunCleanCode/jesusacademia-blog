@@ -128,21 +128,25 @@ export default function InteractiveImageCarousel({
               src={images[currentIndex].src}
               alt={images[currentIndex].alt}
               fill
-              className="object-cover"
+              className={`${
+                images[currentIndex].aspectRatio === 'portrait' 
+                  ? 'object-contain bg-gray-900' 
+                  : 'object-cover'
+              }`}
               priority={currentIndex < 3}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
             />
             
             {/* 이미지 오버레이 정보 */}
             {(images[currentIndex].title || images[currentIndex].description) && (
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6">
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-6">
                 {images[currentIndex].title && (
-                  <h3 className="text-white text-lg md:text-xl font-semibold mb-2">
+                  <h3 className="text-white text-lg md:text-xl font-bold mb-2 drop-shadow-lg">
                     {images[currentIndex].title}
                   </h3>
                 )}
                 {images[currentIndex].description && (
-                  <p className="text-white/90 text-sm md:text-base">
+                  <p className="text-white text-sm md:text-base drop-shadow-lg">
                     {images[currentIndex].description}
                   </p>
                 )}

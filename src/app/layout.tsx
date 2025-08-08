@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { NavigationProvider } from "@/contexts/NavigationContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -77,7 +78,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans antialiased bg-gray-50`}
       >
-        {children}
+        <NavigationProvider>
+          {children}
+        </NavigationProvider>
       </body>
     </html>
   );
