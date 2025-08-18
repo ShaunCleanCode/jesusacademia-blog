@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { NavigationProvider } from "@/contexts/NavigationContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import ChatbotProvider from "@/components/ChatbotProvider";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -19,11 +20,13 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={inter.className}>
-        <NavigationProvider>
-          <ChatbotProvider>
-            {children}
-          </ChatbotProvider>
-        </NavigationProvider>
+        <ThemeProvider>
+          <NavigationProvider>
+            <ChatbotProvider>
+              {children}
+            </ChatbotProvider>
+          </NavigationProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

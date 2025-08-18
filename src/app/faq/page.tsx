@@ -5,10 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Search } from 'lucide-react';
 import { faqData, FAQ } from '@/lib/faq-data';
 import DropdownNavigation from '@/components/DropdownNavigation';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function FAQPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   const filteredFaqs = searchQuery 
     ? faqData.filter(faq => 
@@ -22,7 +25,7 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className={`min-h-screen ${isDark ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
       <DropdownNavigation />
       
       {/* 메인 콘텐츠 */}
@@ -33,10 +36,10 @@ export default function FAQPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className={`text-4xl sm:text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>
             자주 묻는 질문
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto`}>
             예수서원에 대해 궁금한 점들을 확인해보세요
           </p>
         </motion.div>
@@ -49,13 +52,17 @@ export default function FAQPage() {
           className="mb-8"
         >
           <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isDark ? 'text-gray-500' : 'text-gray-400'} w-5 h-5`} />
             <input
               type="text"
               placeholder="질문을 검색해보세요..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
+                isDark 
+                  ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' 
+                  : 'border-gray-300 text-gray-900 placeholder-gray-500'
+              }`}
             />
           </div>
         </motion.div>
@@ -69,19 +76,23 @@ export default function FAQPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+                className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-xl shadow-sm border overflow-hidden`}
               >
                 <button
                   onClick={() => toggleExpanded(faq.id)}
-                  className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  className={`w-full px-6 py-4 text-left flex items-center justify-between transition-colors ${
+                    isDark 
+                      ? 'hover:bg-gray-700' 
+                      : 'hover:bg-gray-50'
+                  }`}
                 >
-                  <h3 className="text-lg font-semibold text-gray-900 pr-4">
+                  <h3 className={`text-lg font-semibold pr-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     {faq.question}
                   </h3>
                   <ChevronDown 
-                    className={`w-5 h-5 text-gray-500 transition-transform ${
+                    className={`w-5 h-5 transition-transform ${
                       expandedId === faq.id ? 'rotate-180' : ''
-                    }`}
+                    } ${isDark ? 'text-gray-400' : 'text-gray-500'}`}
                   />
                 </button>
                 
@@ -95,7 +106,7 @@ export default function FAQPage() {
                       className="overflow-hidden"
                     >
                       <div className="px-6 pb-4">
-                        <p className="text-gray-700 leading-relaxed">
+                        <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
                           {faq.answer}
                         </p>
                       </div>
@@ -114,10 +125,10 @@ export default function FAQPage() {
             animate={{ opacity: 1 }}
             className="text-center py-12"
           >
-            <p className="text-gray-500 text-lg">
+            <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'} text-lg`}>
               "{searchQuery}"에 대한 검색 결과가 없습니다.
             </p>
-            <p className="text-gray-400 mt-2">
+            <p className={`${isDark ? 'text-gray-500' : 'text-gray-400'} mt-2`}>
               다른 키워드로 검색해보세요.
             </p>
           </motion.div>

@@ -1,5 +1,8 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface AvatarCardProps {
   name: string;
@@ -16,8 +19,11 @@ export default function AvatarCard({
   imageUrl,
   className = '' 
 }: AvatarCardProps) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   return (
-    <div className={`bg-white rounded-xl shadow-md p-6 border border-gray-100 animate-slide-up ${className}`}>
+    <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-md p-6 border ${isDark ? 'border-gray-700' : 'border-gray-100'} animate-slide-up ${className}`}>
       <div className="flex items-start space-x-4">
         <div className="flex-shrink-0">
           {imageUrl ? (
@@ -38,13 +44,13 @@ export default function AvatarCard({
         </div>
         
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+          <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'} mb-1`}>
             {name}
           </h3>
           <p className="text-sm text-primary-600 font-medium mb-2">
             {title}
           </p>
-          <p className="text-sm text-gray-600 leading-relaxed">
+          <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>
             {description}
           </p>
         </div>

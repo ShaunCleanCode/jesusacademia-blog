@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, MessageCircle, BookOpen, GraduationCap, Users, Info, Menu, X, ChevronDown, Settings } from 'lucide-react';
+import { Home, MessageCircle, BookOpen, GraduationCap, Users, Info, Menu, X, ChevronDown, Settings, Sun, Moon } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface NavItem {
   name: string;
@@ -60,7 +61,34 @@ const navItems: NavItem[] = [
 
 export default function DropdownNavigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
+
+  const handleNavigation = (href: string) => {
+    if (pathname === href) {
+      setIsOpen(false);
+      return;
+    }
+
+    setIsNavigating(true);
+    setIsOpen(false);
+
+    // body에 navigating 클래스 추가
+    document.body.classList.add('navigating');
+
+    // 페이지 전환 애니메이션을 위한 지연
+    setTimeout(() => {
+      router.push(href);
+      
+      // 페이지 전환 완료 후 클래스 제거
+      setTimeout(() => {
+        setIsNavigating(false);
+        document.body.classList.remove('navigating');
+      }, 100);
+    }, 200);
+  };
 
   return (
     <>
@@ -88,8 +116,23 @@ export default function DropdownNavigation() {
             >
               {/* 헤더 */}
               <div className="p-4 border-b border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900">예수서원</h3>
-                <p className="text-sm text-gray-600 mt-1">복음과 지성의 통합</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">예수서원</h3>
+                    <p className="text-sm text-gray-600 mt-1">복음과 지성의 통합</p>
+                  </div>
+                  <button
+                    onClick={toggleTheme}
+                    className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                    title={theme === 'dark' ? '라이트모드로 전환' : '다크모드로 전환'}
+                  >
+                    {theme === 'dark' ? (
+                      <Sun className="w-5 h-5 text-amber-500" />
+                    ) : (
+                      <Moon className="w-5 h-5 text-gray-600" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               {/* 메뉴 아이템들 */}
@@ -99,22 +142,22 @@ export default function DropdownNavigation() {
                   const isActive = pathname === item.href;
                   
                   return (
-                    <Link
+                    <button
                       key={item.name}
-                      href={item.href}
-                      onClick={() => setIsOpen(false)}
-                      className={`flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors ${
-                        isActive ? 'bg-purple-50 text-purple-700' : 'text-gray-700'
-                      }`}
+                      onClick={() => handleNavigation(item.href)}
+                      disabled={isNavigating}
+                      className={`w-full flex items-center space-x-3 px-4 py-3 transition-all duration-200 ${
+                        isActive ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-50'
+                      } ${isNavigating ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <Icon className={`w-5 h-5 ${isActive ? 'text-purple-600' : 'text-gray-500'}`} />
-                      <div className="flex-1">
+                      <div className="flex-1 text-left">
                         <div className={`font-medium ${isActive ? 'text-purple-700' : 'text-gray-900'}`}>
                           {item.name}
                         </div>
                         <div className="text-xs text-gray-500">{item.description}</div>
                       </div>
-                    </Link>
+                    </button>
                   );
                 })}
               </div>
@@ -130,6 +173,34 @@ export default function DropdownNavigation() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* 페이지 전환 오버레이 */}
+      <AnimatePresence>
+        {isNavigating && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-white/90 backdrop-blur-sm flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="text-center"
+            >
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                className="w-12 h-12 border-3 border-purple-600 border-t-transparent rounded-full mx-auto mb-4"
+              />
+              <p className="text-purple-600 font-medium text-lg">페이지 전환 중...</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* 오버레이 (드롭다운 외부 클릭 시 닫기) */}
       <AnimatePresence>
