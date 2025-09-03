@@ -7,7 +7,6 @@ import InteractiveImageCarousel from './InteractiveImageCarousel';
 import PrimaryButton from './PrimaryButton';
 import TypingAnimation from './TypingAnimation';
 import { getAllCarouselImages } from '@/lib/carousel-data';
-
 export default function HeroSection() {
   const carouselImages = getAllCarouselImages();
 
@@ -83,15 +82,14 @@ export default function HeroSection() {
             <PrimaryButton
               href="/programs"
               size="lg"
-              className="bg-white text-gray-900 hover:bg-gray-100 transition-colors"
+              className="bg-transparent text-white hover:scale-105 transition-transform duration-200 border-2 border-white/50 shadow-lg shadow-white/20"
             >
               프로그램 알아보기
             </PrimaryButton>
             <PrimaryButton
               href="/contact"
-              variant="outline"
               size="lg"
-              className="border-white text-white hover:bg-white hover:text-gray-900 transition-colors"
+              className="bg-transparent text-white hover:scale-105 transition-transform duration-200 border-2 border-white/50 shadow-lg shadow-white/20"
             >
               문의하기
             </PrimaryButton>

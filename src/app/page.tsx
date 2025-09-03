@@ -117,20 +117,17 @@ export default function Home() {
         </section>
 
         {/* Social Media & Contact Section */}
-        <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800' : 'bg-gradient-to-r from-primary-600 to-primary-700'}`}>
+        <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
+              <h2 className={`text-3xl sm:text-4xl font-bold ${isDark ? 'text-white' : 'text-black'} mb-6`}>
                 함께 성장하실 분들을 초대합니다
               </h2>
-              <p className={`text-xl ${isDark ? 'text-gray-200' : 'text-primary-100'} mb-8 leading-relaxed`}>
+              <p className={`text-xl ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-8 leading-relaxed`}>
                 복음과 지성의 통합에 관심이 있는 모든 분들을 예수서원에 초대합니다. 
                 신학도, 지식인, 그리고 진리 탐구에 열정을 가진 분들이 함께 모여, 
                 하나님의 말씀과 인간의 이성이 조화를 이루는 아름다운 세계를 만들어가기를 소망합니다.
               </p>
-              <PrimaryButton href="/contact" variant="secondary" size="lg">
-                문의하기
-              </PrimaryButton>
             </div>
 
             {/* Social Media Links */}
@@ -139,13 +136,13 @@ export default function Home() {
                 href="https://www.youtube.com/user/plumhair388/videos" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className={`${isDark ? 'bg-white/10' : 'bg-white/20'} backdrop-blur-sm rounded-xl p-6 hover:${isDark ? 'bg-white/20' : 'bg-white/30'} transition-all duration-300 group`}
+                className={`${isDark ? 'bg-white/10' : 'bg-white/20'} backdrop-blur-sm rounded-xl p-6 hover:${isDark ? 'bg-white/20' : 'bg-white/30'} transition-all duration-300 group shadow-lg ${isDark ? 'shadow-white/10' : 'shadow-gray-200'}`}
               >
                 <div className="text-center">
                   <Youtube className="w-12 h-12 text-red-500 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                  <h3 className="text-xl font-semibold text-white mb-2">YouTube</h3>
-                  <p className={`${isDark ? 'text-gray-200' : 'text-primary-100'} text-sm`}>예수서원 공식 채널</p>
-                  <p className={`${isDark ? 'text-gray-300' : 'text-primary-200'} text-xs mt-2`}>설교영상 및 강의</p>
+                  <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-black'} mb-2`}>YouTube</h3>
+                  <p className={`${isDark ? 'text-gray-200' : 'text-gray-800'} text-sm`}>예수서원 공식 채널</p>
+                  <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'} text-xs mt-2`}>설교영상 및 강의</p>
                 </div>
               </a>
 
@@ -153,13 +150,13 @@ export default function Home() {
                 href="https://www.instagram.com/jesus_academia/?hl=ko" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className={`${isDark ? 'bg-white/10' : 'bg-white/20'} backdrop-blur-sm rounded-xl p-6 hover:${isDark ? 'bg-white/20' : 'bg-white/30'} transition-all duration-300 group`}
+                className={`${isDark ? 'bg-white/10' : 'bg-white/20'} backdrop-blur-sm rounded-xl p-6 hover:${isDark ? 'bg-white/20' : 'bg-white/30'} transition-all duration-300 group shadow-lg ${isDark ? 'shadow-white/10' : 'shadow-gray-200'}`}
               >
                 <div className="text-center">
                   <Instagram className="w-12 h-12 text-pink-500 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                  <h3 className="text-xl font-semibold text-white mb-2">Instagram</h3>
-                  <p className={`${isDark ? 'text-gray-200' : 'text-primary-100'} text-sm`}>예수서원 공식 계정</p>
-                  <p className={`${isDark ? 'text-gray-300' : 'text-primary-200'} text-xs mt-2`}>일상 및 소식</p>
+                  <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-black'} mb-2`}>Instagram</h3>
+                  <p className={`${isDark ? 'text-gray-200' : 'text-gray-800'} text-sm`}>예수서원 공식 계정</p>
+                  <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'} text-xs mt-2`}>일상 및 소식</p>
                 </div>
               </a>
 
@@ -167,42 +164,47 @@ export default function Home() {
                 href="https://www.jesusacademia.org" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className={`${isDark ? 'bg-white/10' : 'bg-white/20'} backdrop-blur-sm rounded-xl p-6 hover:${isDark ? 'bg-white/20' : 'bg-white/30'} transition-all duration-300 group`}
+                className={`${isDark ? 'bg-white/10' : 'bg-white/20'} backdrop-blur-sm rounded-xl p-6 hover:${isDark ? 'bg-white/20' : 'bg-white/30'} transition-all duration-300 group shadow-lg ${isDark ? 'shadow-white/10' : 'shadow-gray-200'}`}
               >
                 <div className="text-center">
                   <Globe className="w-12 h-12 text-blue-500 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                  <h3 className="text-xl font-semibold text-white mb-2">공식 홈페이지</h3>
-                  <p className={`${isDark ? 'text-gray-200' : 'text-primary-100'} text-sm`}>예수서원 공식 사이트</p>
-                  <p className={`${isDark ? 'text-gray-300' : 'text-primary-200'} text-xs mt-2`}>강좌일정 및 정보</p>
+                  <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-black'} mb-2`}>공식 홈페이지</h3>
+                  <p className={`${isDark ? 'text-gray-200' : 'text-gray-800'} text-sm`}>예수서원 공식 사이트</p>
+                  <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'} text-xs mt-2`}>강좌일정 및 정보</p>
                 </div>
               </a>
             </div>
 
             {/* Contact Information */}
-            <div className={`${isDark ? 'bg-white/10' : 'bg-white/20'} backdrop-blur-sm rounded-xl p-8`}>
-              <h3 className="text-2xl font-bold text-white mb-6 text-center">연락처</h3>
+            <div className={`${isDark ? 'bg-white/10' : 'bg-white/20'} backdrop-blur-sm rounded-xl p-8 shadow-lg ${isDark ? 'shadow-white/10' : 'shadow-gray-200'}`}>
+              <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-black'} mb-6 text-center`}>연락처</h3>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="text-center">
-                  <Phone className={`w-8 h-8 ${isDark ? 'text-gray-300' : 'text-primary-200'} mx-auto mb-3`} />
-                  <h4 className="text-white font-semibold mb-2">전화</h4>
-                  <a href="tel:+1-516-277-2082" className={`${isDark ? 'text-gray-200' : 'text-primary-100'} hover:text-white transition-colors`}>
+                  <Phone className={`w-8 h-8 ${isDark ? 'text-gray-300' : 'text-gray-600'} mx-auto mb-3`} />
+                  <h4 className={`${isDark ? 'text-white' : 'text-black'} font-semibold mb-2`}>전화</h4>
+                  <a href="tel:+1-516-277-2082" className={`${isDark ? 'text-gray-200 hover:text-white' : 'text-gray-800 hover:text-black'} transition-colors`}>
                     516.277.2082
                   </a>
                 </div>
                 <div className="text-center">
-                  <Mail className={`w-8 h-8 ${isDark ? 'text-gray-300' : 'text-primary-200'} mx-auto mb-3`} />
-                  <h4 className="text-white font-semibold mb-2">이메일</h4>
-                  <a href="mailto:JesusChristAcademia@gmail.com" className={`${isDark ? 'text-gray-200' : 'text-primary-100'} hover:text-white transition-colors`}>
+                  <Mail className={`w-8 h-8 ${isDark ? 'text-gray-300' : 'text-gray-600'} mx-auto mb-3`} />
+                  <h4 className={`${isDark ? 'text-white' : 'text-black'} font-semibold mb-2`}>이메일</h4>
+                  <a href="mailto:JesusChristAcademia@gmail.com" className={`${isDark ? 'text-gray-200 hover:text-white' : 'text-gray-800 hover:text-black'} transition-colors`}>
                     JesusChristAcademia@gmail.com
                   </a>
                 </div>
                 <div className="text-center">
-                  <MapPin className={`w-8 h-8 ${isDark ? 'text-gray-300' : 'text-primary-200'} mx-auto mb-3`} />
-                  <h4 className="text-white font-semibold mb-2">주소</h4>
-                  <p className={`${isDark ? 'text-gray-200' : 'text-primary-100'} text-sm`}>
+                  <MapPin className={`w-8 h-8 ${isDark ? 'text-gray-300' : 'text-gray-600'} mx-auto mb-3`} />
+                  <h4 className={`${isDark ? 'text-white' : 'text-black'} font-semibold mb-2`}>주소</h4>
+                  <a 
+                    href="https://www.google.com/maps/place/%EC%98%88%EC%88%98%EC%84%9C%EC%9B%90+Jesus+Academia/@40.8489966,-73.581443,17z/data=!3m1!4b1!4m6!3m5!1s0x89c285dfb6b2f5a1:0x86371e7fb533e182!8m2!3d40.8489926!4d-73.5765775!16s%2Fg%2F11xsbxcg53?entry=ttu&g_ep=EgoyMDI1MDgyNS4wIKXMDSoASAFQAw%3D%3D"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${isDark ? 'text-gray-200 hover:text-white' : 'text-gray-800 hover:text-black'} text-sm transition-colors`}
+                  >
                     1330 Wolver Hollow Rd.<br />
                     Oyster Bay, NY 11771
-                  </p>
+                  </a>
                 </div>
               </div>
             </div>

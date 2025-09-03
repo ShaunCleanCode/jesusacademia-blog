@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Calendar, Clock, Users, MapPin, BookOpen, Heart, Video, MessageCircle, GraduationCap } from 'lucide-react';
 import DropdownNavigation from '@/components/DropdownNavigation';
+import ScheduleCalendar from '@/components/ScheduleCalendar';
 import { useTheme } from '@/contexts/ThemeContext';
 
 export default function ProgramsPage() {
@@ -158,57 +159,10 @@ export default function ProgramsPage() {
         </div>
       </section>
 
-      {/* Weekly Schedule Preview */}
+      {/* Interactive Schedule Calendar */}
       <section id="weekly-schedule" className={`${isDark ? 'bg-gray-800' : 'bg-gray-50'} py-20`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className={`text-4xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>
-              일반 캠프 1주일 전체 일정
-            </h2>
-            <p className={`text-xl ${isDark ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto`}>
-              체계적이고 집중적인 학습을 위한 상세한 일정표
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-7 gap-4 mb-12">
-            {[
-              { day: '월', activities: ['⭐ 자유 일정 (~17:00)', '🧭 오리엔테이션 (17:00-18:00)', '🍗 저녁식사 (18:00-19:30)', '👥 교제 시간 (19:30-21:00)'], href: '/programs/schedule?day=mon' },
-              { day: '화', activities: ['🛐 경건회 (07:30-08:30)', '🍞 아침식사 (08:30-09:30)', '📚 1차 강의 (09:30-11:00)', '☕ 휴식 (11:00-11:30)', '📚 2차 강의 (11:30-13:00)', '🍽️ 점심식사 (13:00-15:00)', '📚 3차 강의 (15:00-16:30)', '☕ 휴식 (16:30-17:30)', '📚 4차 강의 (17:30-19:00)', '🍗 저녁식사 (19:00-20:30)', '간증 및 자유시간 (20:30~)'], href: '/programs/schedule?day=tue' },
-              { day: '수', activities: ['🛐 경건회 (07:30-08:30)', '🍞 아침식사 (08:30-09:30)', '📚 1차 강의 (09:30-11:00)', '☕ 휴식 (11:00-11:30)', '📚 2차 강의 (11:30-13:00)', '🍽️ 점심식사 (13:00-15:00)', '📚 3차 강의 (15:00-16:30)', '☕ 휴식 (16:30-17:30)', '📚 4차 강의 (17:30-19:00)', '🍗 저녁식사 (19:00-20:30)', '간증 및 자유시간 (20:30~)'], href: '/programs/schedule?day=wed' },
-              { day: '목', activities: ['🛐 경건회 (07:30-08:30)', '🍞 아침식사 (08:30-09:30)', '📚 1차 강의 (09:30-11:00)', '☕ 휴식 (11:00-11:30)', '📚 2차 강의 (11:30-13:00)', '🍽️ 점심식사 (13:00-15:00)', '📚 3차 강의 (15:00-16:30)', '☕ 휴식 (16:30-17:30)', '📚 4차 강의 (17:30-19:00)', '🍗 저녁식사 (19:00-20:30)', '간증 및 자유시간 (20:30~)'], href: '/programs/schedule?day=thu' },
-              { day: '금', activities: ['🛐 경건회 (07:30-08:30)', '🍞 아침식사 (08:30-09:30)', '📚 1차 강의 (09:30-11:00)', '☕ 휴식 (11:00-11:30)', '📚 2차 강의 (11:30-13:00)', '🍽️ 점심식사 (13:00-15:00)', '📚 3차 강의 (15:00-16:30)', '☕ 휴식 (16:30-17:30)', '📚 4차 강의 (17:30-19:00)', '🍗 저녁식사 (19:00-20:30)', '간증 및 자유시간 (20:30~)'], href: '/programs/schedule?day=fri' },
-              { day: '토', activities: ['⭐ 자유 일정 (전일)'], href: '/programs/schedule?day=sat' },
-              { day: '일', activities: ['🙏 예배 (11:00-13:00)', '🍗 점심식사 (13:00-15:00)', '⭐ 자유 일정 (15:00~)'], href: '/programs/schedule?day=sun' }
-            ].map((schedule, index) => (
-              <Link key={index} href={schedule.href} className={`${isDark ? 'bg-gray-700 border-gray-600 hover:border-blue-500' : 'bg-white border-gray-200 hover:border-blue-400'} rounded-xl p-4 border transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md`}>
-                <h3 className="text-lg font-bold text-white text-center mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-200">
-                  {schedule.day}
-                </h3>
-                <div className="space-y-2">
-                  {schedule.activities.map((activity, actIndex) => (
-                    <div key={actIndex} className={`text-xs ${isDark ? 'text-gray-300 group-hover:text-gray-200' : 'text-gray-600 group-hover:text-gray-700'} leading-tight transition-colors duration-200`}>
-                      {activity}
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-3 text-center">
-                  <div className="text-xs text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    클릭하여 상세보기 →
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-          
-          {/* 상세 일정 보기 버튼 */}
-          <div className="text-center">
-            <a 
-              href="/programs/schedule"
-              className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 active:bg-blue-900 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200 transform hover:scale-105"
-            >
-              📅 전체 상세 일정 보기
-            </a>
-          </div>
+          <ScheduleCalendar />
         </div>
       </section>
 
