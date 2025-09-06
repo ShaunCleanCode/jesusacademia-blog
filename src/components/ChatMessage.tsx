@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ChatMessageProps {
   message: string;
@@ -12,6 +13,9 @@ interface ChatMessageProps {
 }
 
 export default function ChatMessage({ message, isUser, timestamp, showLogo = false }: ChatMessageProps) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -34,11 +38,13 @@ export default function ChatMessage({ message, isUser, timestamp, showLogo = fal
         <div className={`px-4 py-3 rounded-2xl shadow-sm ${
           isUser 
             ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' 
-            : 'bg-white text-gray-900 border border-gray-200'
+            : isDark 
+              ? 'bg-gray-700 text-gray-100 border border-gray-600' 
+              : 'bg-white text-gray-900 border border-gray-200'
         }`}>
           <p className="text-sm leading-relaxed whitespace-pre-line">{message}</p>
           {timestamp && (
-            <p className={`text-xs mt-1 ${isUser ? 'text-blue-100' : 'text-gray-500'}`}>
+            <p className={`text-xs mt-1 ${isUser ? 'text-blue-100' : isDark ? 'text-gray-400' : 'text-gray-500'}`}>
               {timestamp}
             </p>
           )}

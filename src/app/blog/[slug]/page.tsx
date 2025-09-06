@@ -242,10 +242,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   </div>
                   <div className="flex items-start">
                     <MapPin className="w-4 h-4 text-primary-600 mr-2 mt-1 flex-shrink-0" />
-                    <span className="text-gray-700">
+                    <a 
+                      href="https://www.google.com/maps/place/%EC%98%88%EC%88%98%EC%84%9C%EC%9B%90+Jesus+Academia/@40.8498531,-73.5758261,21z/data=!4m6!3m5!1s0x89c285dfb6b2f5a1:0x86371e7fb533e182!8m2!3d40.8489926!4d-73.5765775!16s%2Fg%2F11xsbxcg53?entry=ttu&g_ep=EgoyMDI1MDkwMy4wIKXMDSoASAFQAw%3D%3D"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-700 hover:text-primary-600 transition-colors"
+                    >
                       1330 Wolver Hollow Rd.<br />
                       Oyster Bay, NY 11771
-                    </span>
+                    </a>
                   </div>
                 </div>
               </div>
