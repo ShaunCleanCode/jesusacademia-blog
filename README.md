@@ -15,11 +15,13 @@
 - **Framework**: Next.js 14 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS + @tailwindcss/typography
-- **UI Components**: Custom Components (HighlightBox, AvatarCard, PrimaryButton)
+- **UI Components**: Custom Components (HighlightBox, AvatarCard, PrimaryButton, ContactCard, ContactCategory, ContactInfo, ChatbotCTA, ChatbotFAB, ChatbotWindow, ChatMessage, TypingIndicator)
 - **SEO**: Next.js Metadata API + Schema.org 구조화 데이터
 - **Icons**: Lucide React
 - **Animations**: Framer Motion + CSS Animations
-- **Chatbot**: 프리 챗봇 시스템 (키워드 기반 응답)
+- **Chatbot**: Material Design 3.0 기반 AI 챗봇 시스템
+- **Theme**: Dark Mode 지원 (ThemeContext)
+- **Design System**: Purple-Blue 그라데이션, rounded-2xl, 일관된 색상 팔레트
 
 ## 📁 프로젝트 구조
 
@@ -30,7 +32,13 @@ jesusacademia-blog/
 │   │   ├── layout.tsx          # 루트 레이아웃 (SEO 메타데이터 포함)
 │   │   ├── page.tsx            # 홈페이지 (인터랙티브 캐러셀)
 │   │   ├── faq/
-│   │   │   └── page.tsx        # FAQ 페이지
+│   │   │   └── page.tsx        # FAQ 페이지 (Hero Section + 검색 기능)
+│   │   ├── contact/
+│   │   │   └── page.tsx        # 연락처 페이지 (담당자별 연락처 + 챗봇 CTA)
+│   │   ├── programs/
+│   │   │   ├── page.tsx        # 프로그램 페이지
+│   │   │   └── schedule/
+│   │   │       └── page.tsx    # 일정 페이지
 │   │   ├── admin/
 │   │   │   └── chatbot/
 │   │   │       └── page.tsx    # 챗봇 응답 관리 페이지
@@ -47,10 +55,15 @@ jesusacademia-blog/
 │   │   ├── HeroSection.tsx     # 풀스크린 히어로 섹션
 │   │   ├── TypingAnimation.tsx # 타이핑 애니메이션
 │   │   ├── DropdownNavigation.tsx # 드롭다운 네비게이션
+│   │   ├── ContactCard.tsx     # 연락처 담당자 카드
+│   │   ├── ContactCategory.tsx # 연락처 카테고리 그룹
+│   │   ├── ContactInfo.tsx     # 일반 연락처 정보
+│   │   ├── ChatbotCTA.tsx      # 챗봇 CTA 섹션
 │   │   ├── ChatbotFAB.tsx      # 챗봇 플로팅 버튼
-│   │   ├── ChatbotWindow.tsx   # 챗봇 창 UI
+│   │   ├── ChatbotWindow.tsx   # 챗봇 창 UI (Material Design 3.0)
 │   │   ├── ChatbotProvider.tsx # 챗봇 상태 관리
-│   │   └── ChatMessage.tsx     # 챗봇 메시지 컴포넌트
+│   │   ├── ChatMessage.tsx     # 챗봇 메시지 컴포넌트
+│   │   └── TypingIndicator.tsx # 구글 스타일 타이핑 인디케이터
 │   └── lib/
 │       ├── schema.ts                    # SEO 스키마 유틸리티
 │       ├── pastor-ko-profile.md         # 고석희 목사 상세 프로필
@@ -61,7 +74,11 @@ jesusacademia-blog/
 │       ├── sample-camp-data.ts          # 샘플 캠프 데이터
 │       ├── carousel-data.ts             # 캐러셀 이미지 데이터
 │       ├── faq-data.ts                  # FAQ 데이터
+│       ├── contact-data.ts              # 연락처 데이터 (담당자별 연락처)
 │       └── chatbot-responses.ts         # 챗봇 응답 데이터
+│   ├── contexts/
+│   │   ├── ThemeContext.tsx             # 다크모드 테마 컨텍스트
+│   │   └── NavigationContext.tsx        # 네비게이션 컨텍스트
 ├── public/
 │   ├── images/                          # 이미지 파일 저장소
 │   │   ├── logos/                       # 로고 파일들
@@ -112,7 +129,12 @@ npm run dev
 - ✅ 타이핑 애니메이션 구현 완료
 - ✅ 드롭다운 네비게이션 구현 완료
 - ✅ 프리 챗봇 시스템 완성 (2025-08-08)
-- 🔄 **진행 중**: AI 모델 통합, 블로그 시스템, 졸업앨범
+- ✅ 연락처 페이지 완성 (담당자별 연락처 + 챗봇 CTA)
+- ✅ FAQ 페이지 디자인 개선 (Hero Section + 일관된 디자인)
+- ✅ Material Design 3.0 챗봇 UI 완성
+- ✅ 다크모드 지원 완성
+- ✅ 구글 스타일 타이핑 인디케이터 완성
+- 🔄 **진행 중**: 블로그 시스템, 졸업앨범
 
 ### **Additional Packages**
 ```bash
@@ -136,42 +158,90 @@ npm run build
 - Oyster Bay 위치 정보
 - 핵심 가치와 사명
 
-### 2. 챗봇 시스템 (프리 버전)
+### 2. 챗봇 시스템 (Material Design 3.0)
 - **24시간 AI 상담**: 키워드 기반 응답 시스템
 - **빠른 질문 선택**: 6개의 자주 묻는 질문 버튼
-- **이모티콘 응답**: 친근하고 시각적으로 매력적인 응답
+- **구글 스타일 타이핑 인디케이터**: 자연스러운 대화 경험
+- **Material Design 3.0 UI**: 현대적이고 일관된 디자인
+- **다크모드 지원**: 완벽한 다크/라이트 테마 전환
 - **3D 로고**: 예수 그리스도 3D 렌더링 이미지
 - **관리 페이지**: `/admin/chatbot`에서 응답 관리
 - **반응형 디자인**: 데스크톱/모바일 최적화
+- **부드러운 애니메이션**: Framer Motion 기반 인터랙션
 
 ### 3. 네비게이션
 - **드롭다운 네비게이션**: 우상단 드롭다운 메뉴
 - **반응형 디자인**: 모바일에서 전체 화면
 - **페이지 링크**: 홈, FAQ, 프로그램, 졸업앨범, 소개, 연락처
 
-### 4. FAQ 시스템
+### 4. FAQ 시스템 (개선된 디자인)
 - **10개 기본 FAQ**: 예수서원 소개, 운영, 연락처 등
-- **검색 기능**: 키워드 기반 FAQ 검색
+- **Hero Section**: 그라데이션 배경과 Quick Stats
+- **검색 기능**: 키워드 기반 FAQ 검색 (향상된 UI)
 - **카테고리 분류**: 일반, 프로그램, 연락처, 위치
+- **일관된 디자인**: 연락처 페이지와 동일한 디자인 시스템
+- **부드러운 애니메이션**: FAQ 카드 호버 효과 및 전환
 
-### 5. 블로그 시스템
+### 5. 연락처 시스템 (새로 추가)
+- **담당자별 연락처**: 수강신청, 강좌문의 카테고리별 분류
+- **일반 연락처**: 전화, 이메일, 주소, 운영시간
+- **Google Maps 연동**: 주소 클릭 시 지도 열기
+- **챗봇 CTA**: 빠른 답변을 위한 챗봇 연동
+- **Hero Section**: 그라데이션 배경과 Quick Stats
+- **다크모드 지원**: 완벽한 테마 전환
+
+### 6. 블로그 시스템
 - 동적 라우팅 (`/blog/[slug]`)
 - SEO 최적화 (메타데이터, 구조화 데이터)
 - FAQ 섹션 자동 생성
 - 반응형 디자인
 
-### 6. 컴포넌트 시스템
+### 7. 컴포넌트 시스템 (확장됨)
 - **HighlightBox**: 주요 메시지 강조
 - **AvatarCard**: 인물 정보 표시
 - **PrimaryButton**: CTA 버튼
 - **InteractiveImageCarousel**: 인터랙티브 캐러셀
 - **TypingAnimation**: 타이핑 애니메이션
+- **ContactCard**: 연락처 담당자 카드
+- **ContactCategory**: 연락처 카테고리 그룹
+- **ContactInfo**: 일반 연락처 정보
+- **ChatbotCTA**: 챗봇 CTA 섹션
+- **ChatbotFAB**: 챗봇 플로팅 버튼
+- **ChatbotWindow**: Material Design 3.0 챗봇 창
+- **ChatMessage**: 챗봇 메시지 컴포넌트
+- **TypingIndicator**: 구글 스타일 타이핑 인디케이터
 
-### 7. SEO 최적화
+### 8. SEO 최적화
 - Next.js Metadata API 활용
 - Schema.org 구조화 데이터
 - Open Graph 및 Twitter 카드
 - 한국어 최적화
+
+## 🎨 디자인 시스템 & 철칙
+
+### **색상 팔레트**
+- **Primary**: Blue 계열 (`blue-400`, `blue-500`, `blue-600`)
+- **Accent**: Purple 계열 (`purple-400`, `purple-500`, `purple-600`)
+- **Gradient**: `from-blue-400 to-purple-400` (제목, 버튼)
+- **Background**: `from-gray-50 to-white` (라이트), `from-gray-900 via-gray-800 to-black` (다크)
+
+### **디자인 원칙**
+- **일관된 모서리**: 모든 요소에 `rounded-2xl` 적용
+- **그림자 시스템**: `shadow-lg`, `hover:shadow-xl` 계층적 적용
+- **그라데이션 활용**: 버튼, 아이콘, 제목에 Purple-Blue 그라데이션
+- **다크모드 완벽 지원**: 모든 컴포넌트에 `useTheme` 적용
+- **Material Design 3.0**: 구글 스타일의 현대적 UI/UX
+
+### **컴포넌트 패턴**
+- **Hero Section**: 모든 페이지에 그라데이션 배경 + Quick Stats
+- **카드 디자인**: `rounded-2xl`, 호버 효과, 그라데이션 배경
+- **애니메이션**: Framer Motion 기반 부드러운 전환
+- **타이포그래피**: 그라데이션 텍스트 (`bg-clip-text text-transparent`)
+
+### **반응형 디자인**
+- **모바일 우선**: `sm:`, `md:`, `lg:` 브레이크포인트 활용
+- **터치 친화적**: 충분한 터치 영역과 간격
+- **접근성**: 키보드 네비게이션 및 스크린 리더 지원
 
 ## 🤖 챗봇 기능 상세
 
@@ -289,9 +359,9 @@ NEXT_PUBLIC_SITE_URL=https://jesusacademia.org
 - [ ] 방명록 시스템
 
 ### **Phase 5: 추가 페이지**
-- [ ] 프로그램 페이지 (`/programs`)
+- [x] 프로그램 페이지 (`/programs`) - 기본 구조 완성
+- [x] 연락처 페이지 (`/contact`) - 완성
 - [ ] 소개 페이지 (`/about`)
-- [ ] 연락처 페이지 (`/contact`)
 
 ### **기타 기능**
 - [ ] Nest.js 기반 CMS 연동
