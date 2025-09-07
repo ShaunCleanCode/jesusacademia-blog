@@ -1,296 +1,366 @@
-import { Metadata } from 'next';
-import Image from 'next/image';
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Calendar, Clock, Eye, Heart, ArrowLeft, Share2, BookOpen, User, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getBlogPostBySlug, getRelatedPosts } from '@/lib/blog/data';
+import { BlogPost } from '@/lib/blog/types';
+import { useTheme } from '@/contexts/ThemeContext';
+import DropdownNavigation from '@/components/DropdownNavigation';
 import Link from 'next/link';
-import HighlightBox from '@/components/HighlightBox';
-import AvatarCard from '@/components/AvatarCard';
-import PrimaryButton from '@/components/PrimaryButton';
-import { generateBlogPostSchema, generateFAQSchema, defaultFAQs } from '@/lib/schema';
-import { Youtube, Instagram, Globe, Mail, Phone, MapPin } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface BlogPostPageProps {
-  params: Promise<{
+  params: {
     slug: string;
-  }>;
-}
-
-// 실제로는 데이터베이스나 CMS에서 가져올 데이터
-const blogData = {
-  title: "고석희 목사와 예수서원",
-  description: "고석희 목사가 뉴욕에서 시작한 복음+지성 통합 아카데미",
-  authorName: "예수서원",
-  publishedDate: "2024-01-15",
-  modifiedDate: "2024-01-15",
-  imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=600&fit=crop",
-  url: "https://jesusacademia.org/blog/introduction",
-  content: {
-    hero_image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=600&fit=crop",
-    sections: [
-      {
-        title: "예수서원의 사명",
-        content: "예수서원은 복음과 지성의 조화로운 통합을 추구하는 기독교 인문학 아카데미입니다. 현대 사회에서 종교와 학문이 분리되어 있는 상황에서, 우리는 진정한 지혜가 하나님의 말씀과 인간의 이성을 함께 통해 온다는 믿음을 가지고 있습니다."
-      },
-      {
-        title: "고석희 목사의 소개",
-        content: "고석희 목사는 예수서원의 설립자이자 원장으로, 깊이 있는 신학적 통찰과 현대 철학에 대한 이해를 바탕으로 복음과 지성의 통합을 실천하고 있습니다. 뉴욕에서의 오랜 목회 경험과 학문적 배경을 통해, 현대인들이 직면한 영적, 지적 도전에 대한 해답을 제시합니다."
-      },
-      {
-        title: "Oyster Bay 위치의 의미",
-        content: "뉴욕 롱아일랜드의 Oyster Bay는 아름다운 자연 환경과 함께 깊이 있는 성찰의 시간을 제공하는 이상적인 장소입니다. 이곳에서 우리는 현대 문명의 소음에서 벗어나, 하나님의 창조 세계 속에서 진정한 지혜를 탐구할 수 있습니다."
-      },
-      {
-        title: "훈련 프로그램 소개",
-        content: "예수서원에서는 기독교 인문학, 성경 연구, 철학, 역사, 문학 등을 통합한 다양한 훈련 프로그램을 제공합니다. 단순한 지식 전달이 아닌, 삶의 변화를 이끌어내는 실천적 학습을 통해 참된 지혜를 추구합니다."
-      },
-      {
-        title: "초대의 메시지",
-        content: "복음과 지성의 통합에 관심이 있는 모든 분들을 예수서원에 초대합니다. 신학도, 지식인, 그리고 진리 탐구에 열정을 가진 분들이 함께 모여, 하나님의 말씀과 인간의 이성이 조화를 이루는 아름다운 세계를 만들어가기를 소망합니다."
-      }
-    ]
-  }
-};
-
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  // slug를 사용하여 동적으로 메타데이터 생성 가능
-  return {
-    title: `${blogData.title} - 예수서원`,
-    description: blogData.description,
-    keywords: ["예수서원", "고석희 목사", "기독교 인문학", "뉴욕", "Oyster Bay"],
-    authors: [{ name: blogData.authorName }],
-    openGraph: {
-      title: blogData.title,
-      description: blogData.description,
-      images: [blogData.imageUrl],
-      type: 'article',
-      publishedTime: blogData.publishedDate,
-      modifiedTime: blogData.modifiedDate,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: blogData.title,
-      description: blogData.description,
-      images: [blogData.imageUrl],
-    },
   };
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = await params;
-  // slug를 사용하여 동적으로 블로그 데이터 로드 가능
-  const schemaData = generateBlogPostSchema({
-    title: blogData.title,
-    description: blogData.description,
-    authorName: blogData.authorName,
-    publishedDate: blogData.publishedDate,
-    modifiedDate: blogData.modifiedDate,
-    imageUrl: blogData.imageUrl,
-    url: blogData.url,
-  });
+export default function BlogPostPage({ params }: BlogPostPageProps) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const router = useRouter();
+  
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const faqSchema = generateFAQSchema(defaultFAQs);
+  useEffect(() => {
+    const foundPost = getBlogPostBySlug(params.slug);
+    if (foundPost) {
+      setPost(foundPost);
+      setRelatedPosts(getRelatedPosts(foundPost, 3));
+    }
+    setIsLoading(false);
+  }, [params.slug]);
+
+  if (isLoading) {
+    return (
+      <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-white'} flex items-center justify-center`}>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-white'} flex items-center justify-center`}>
+        <div className="text-center">
+          <h1 className={`text-4xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            포스트를 찾을 수 없습니다
+          </h1>
+          <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-8`}>
+            요청하신 블로그 포스트가 존재하지 않습니다.
+          </p>
+          <Link
+            href="/blog"
+            className="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            블로그로 돌아가기
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Markdown을 HTML로 변환하는 간단한 함수 (실제로는 remark 사용)
+  const renderContent = (content: string) => {
+    return content
+      .replace(/^# (.*$)/gim, '<h1 class="text-4xl font-bold mb-6 text-gray-900 dark:text-white">$1</h1>')
+      .replace(/^## (.*$)/gim, '<h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">$1</h2>')
+      .replace(/^### (.*$)/gim, '<h3 class="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">$1</h3>')
+      .replace(/^\- (.*$)/gim, '<li class="ml-4">$1</li>')
+      .replace(/\*\*(.*)\*\*/gim, '<strong class="font-bold">$1</strong>')
+      .replace(/\*(.*)\*/gim, '<em class="italic">$1</em>')
+      .replace(/\n\n/gim, '</p><p class="mb-4">')
+      .replace(/^(?!<[h|l])/gim, '<p class="mb-4">')
+      .replace(/(<li.*<\/li>)/gim, '<ul class="list-disc ml-6 mb-4">$1</ul>');
+  };
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(schemaData),
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(faqSchema),
-        }}
-      />
-      
-      <article className="min-h-screen bg-white">
-        {/* Hero Section */}
-        <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <Link 
-                href="/blog" 
-                className="inline-flex items-center text-primary-600 hover:text-primary-700 mb-6 transition-colors"
-              >
-                ← 블로그로 돌아가기
-              </Link>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 animate-fade-in">
-                {blogData.title}
-              </h1>
-              <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-                {blogData.description}
-              </p>
-              <div className="flex items-center justify-center space-x-4 text-sm text-gray-500">
-                <span>작성자: {blogData.authorName}</span>
-                <span>•</span>
-                <span>{new Date(blogData.publishedDate).toLocaleDateString('ko-KR')}</span>
-              </div>
-            </div>
-            
-            <div className="relative h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg mb-12">
-              <Image
-                src="/images/campus/building-exterior.jpg"
-                alt="뉴욕 Oyster Bay 예수서원 건물 외관 - 울창한 녹색 나무와 아름다운 벽돌 건물"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          </div>
-        </section>
+    <div className={`min-h-screen ${isDark ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
+      <DropdownNavigation />
 
-        {/* Content Section */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="prose prose-lg max-w-none">
-              {blogData.content.sections.map((section, index) => (
-                <div key={index} className="mb-12">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                    {section.title}
-                  </h2>
-                  <div className="text-lg text-gray-700 leading-relaxed">
-                    {section.content}
-                  </div>
-                </div>
+      {/* Hero Section */}
+      <section className={`${isDark ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black' : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'} text-white py-20`}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            {/* Back Button */}
+            <button
+              onClick={() => router.back()}
+              className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-8"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              뒤로 가기
+            </button>
+
+            {/* Categories */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              {post.categories.map(category => (
+                <span
+                  key={category.id}
+                  className="px-4 py-2 text-sm font-medium rounded-full"
+                  style={{ 
+                    backgroundColor: `${category.color}20`,
+                    color: category.color
+                  }}
+                >
+                  {category.icon} {category.name}
+                </span>
               ))}
             </div>
 
-            {/* Author Card */}
-            <div className="mt-16">
-              <AvatarCard
-                name="고석희 목사"
-                title="예수서원 원장"
-                imageUrl="/images/gallery/pastor-ko/pastor-ko-main.jpg"
-                description="뉴욕에서의 오랜 목회 경험과 학문적 배경을 통해, 현대인들이 직면한 영적, 지적 도전에 대한 해답을 제시합니다. 깊이 있는 신학적 통찰과 현대 철학에 대한 이해를 바탕으로 복음과 지성의 통합을 실천하고 있습니다."
+            {/* Title */}
+            <h1 className="text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              {post.title}
+            </h1>
+
+            {/* Excerpt */}
+            <p className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-700'} max-w-3xl leading-relaxed mb-8`}>
+              {post.excerpt}
+            </p>
+
+            {/* Meta Info */}
+            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400">
+              <div className="flex items-center">
+                <User className="w-5 h-5 mr-2 text-blue-400" />
+                <span>{post.author.name}</span>
+              </div>
+              <div className="flex items-center">
+                <Calendar className="w-5 h-5 mr-2 text-blue-400" />
+                <span>{post.publishedAt.toLocaleDateString('ko-KR')}</span>
+              </div>
+              <div className="flex items-center">
+                <Clock className="w-5 h-5 mr-2 text-blue-400" />
+                <span>{post.readingTime}분 읽기</span>
+              </div>
+              <div className="flex items-center">
+                <Eye className="w-5 h-5 mr-2 text-blue-400" />
+                <span>{post.viewCount}회 조회</span>
+              </div>
+              <div className="flex items-center">
+                <Heart className="w-5 h-5 mr-2 text-blue-400" />
+                <span>{post.likeCount}개 좋아요</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Featured Image */}
+      {post.featuredImage && (
+        <section className={`${isDark ? 'bg-gray-900' : 'bg-white'} py-8`}>
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative overflow-hidden rounded-2xl shadow-2xl"
+            >
+              <img
+                src={post.featuredImage.url}
+                alt={post.featuredImage.alt}
+                className="w-full h-96 object-cover"
               />
-            </div>
+              {post.featuredImage.caption && (
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                  <p className="text-white text-sm">{post.featuredImage.caption}</p>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        </section>
+      )}
 
-            {/* CTA Section */}
-            <div className="mt-16 p-8 bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl">
-              <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  함께 성장하실 분들을 초대합니다
-                </h3>
-                <p className="text-lg text-gray-600 mb-6">
-                  복음과 지성의 통합에 관심이 있는 모든 분들을 예수서원에 초대합니다.
-                </p>
-                <PrimaryButton href="/contact" size="lg">
-                  문의하기
-                </PrimaryButton>
-              </div>
-            </div>
+      {/* Content */}
+      <section className={`${isDark ? 'bg-gray-900' : 'bg-white'} py-20`}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-4 gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-3">
+              <motion.article
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className={`prose prose-lg max-w-none ${
+                  isDark 
+                    ? 'prose-invert prose-gray' 
+                    : 'prose-gray'
+                }`}
+                dangerouslySetInnerHTML={{ __html: renderContent(post.content) }}
+              />
 
-            {/* Social Media & Contact Section */}
-            <div className="mt-8 p-8 bg-gray-50 rounded-xl">
-              <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">예수서원 공식 채널</h3>
-              <div className="grid md:grid-cols-3 gap-6 mb-8">
-                <a 
-                  href="https://www.youtube.com/user/plumhair388/videos" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 group"
-                >
-                  <Youtube className="w-8 h-8 text-red-500 mr-4 group-hover:scale-110 transition-transform" />
-                  <div>
-                    <h4 className="font-semibold text-gray-900">YouTube</h4>
-                    <p className="text-sm text-gray-600">설교영상 및 강의</p>
-                  </div>
-                </a>
-
-                <a 
-                  href="https://www.instagram.com/jesus_academia/?hl=ko" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 group"
-                >
-                  <Instagram className="w-8 h-8 text-pink-500 mr-4 group-hover:scale-110 transition-transform" />
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Instagram</h4>
-                    <p className="text-sm text-gray-600">일상 및 소식</p>
-                  </div>
-                </a>
-
-                <a 
-                  href="https://www.jesusacademia.org" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 group"
-                >
-                  <Globe className="w-8 h-8 text-blue-500 mr-4 group-hover:scale-110 transition-transform" />
-                  <div>
-                    <h4 className="font-semibold text-gray-900">공식 홈페이지</h4>
-                    <p className="text-sm text-gray-600">강좌일정 및 정보</p>
-                  </div>
-                </a>
-              </div>
-
-              <div className="bg-white rounded-lg p-6 shadow-sm">
-                <h4 className="font-semibold text-gray-900 mb-4 text-center">연락처</h4>
-                <div className="grid md:grid-cols-3 gap-4 text-sm">
-                  <div className="flex items-center">
-                    <Phone className="w-4 h-4 text-primary-600 mr-2" />
-                    <a href="tel:+1-516-277-2082" className="text-gray-700 hover:text-primary-600 transition-colors">
-                      516.277.2082
-                    </a>
-                  </div>
-                  <div className="flex items-center">
-                    <Mail className="w-4 h-4 text-primary-600 mr-2" />
-                    <a href="mailto:JesusChristAcademia@gmail.com" className="text-gray-700 hover:text-primary-600 transition-colors">
-                      JesusChristAcademia@gmail.com
-                    </a>
-                  </div>
-                  <div className="flex items-start">
-                    <MapPin className="w-4 h-4 text-primary-600 mr-2 mt-1 flex-shrink-0" />
-                    <a 
-                      href="https://www.google.com/maps/place/%EC%98%88%EC%88%98%EC%84%9C%EC%9B%90+Jesus+Academia/@40.8498531,-73.5758261,21z/data=!4m6!3m5!1s0x89c285dfb6b2f5a1:0x86371e7fb533e182!8m2!3d40.8489926!4d-73.5765775!16s%2Fg%2F11xsbxcg53?entry=ttu&g_ep=EgoyMDI1MDkwMy4wIKXMDSoASAFQAw%3D%3D"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-700 hover:text-primary-600 transition-colors"
+              {/* Tags */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700"
+              >
+                <div className="flex items-center mb-4">
+                  <Tag className="w-5 h-5 mr-2 text-purple-600" />
+                  <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    태그
+                  </h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {post.tags.map(tag => (
+                    <span
+                      key={tag.id}
+                      className="px-3 py-1 text-sm font-medium rounded-full text-white"
+                      style={{ backgroundColor: tag.color }}
                     >
-                      1330 Wolver Hollow Rd.<br />
-                      Oyster Bay, NY 11771
+                      {tag.name}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Share Buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Share2 className="w-5 h-5 mr-2 text-purple-600" />
+                    <span className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      공유하기
+                    </span>
+                  </div>
+                  <div className="flex space-x-3">
+                    <button className="p-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
+                      Facebook
+                    </button>
+                    <button className="p-2 bg-blue-400 text-white rounded-xl hover:bg-blue-500 transition-colors">
+                      Twitter
+                    </button>
+                    <button className="p-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors">
+                      WhatsApp
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="space-y-6"
+              >
+                {/* Author Card */}
+                <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-6 shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                  <div className="flex items-center mb-4">
+                    <img
+                      src={post.author.avatar}
+                      alt={post.author.name}
+                      className="w-12 h-12 rounded-full mr-4"
+                    />
+                    <div>
+                      <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                        {post.author.name}
+                      </h3>
+                      <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        작성자
+                      </p>
+                    </div>
+                  </div>
+                  <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
+                    {post.author.bio}
+                  </p>
+                </div>
+
+                {/* Table of Contents */}
+                <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-6 shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                  <div className="flex items-center mb-4">
+                    <BookOpen className="w-5 h-5 mr-2 text-purple-600" />
+                    <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      목차
+                    </h3>
+                  </div>
+                  <div className="space-y-2">
+                    <a href="#intro" className={`block text-sm ${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors`}>
+                      들어가며
+                    </a>
+                    <a href="#main" className={`block text-sm ${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors`}>
+                      본문
+                    </a>
+                    <a href="#conclusion" className={`block text-sm ${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors`}>
+                      결론
                     </a>
                   </div>
                 </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Related Posts */}
+      {relatedPosts.length > 0 && (
+        <section className={`${isDark ? 'bg-gray-800' : 'bg-gray-50'} py-20`}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <h2 className={`text-3xl font-bold text-center mb-12 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                관련 포스트
+              </h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {relatedPosts.map((relatedPost, index) => (
+                  <motion.div
+                    key={relatedPost.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.7 + index * 0.1 }}
+                    className={`${isDark ? 'bg-gray-900' : 'bg-white'} rounded-2xl shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'} overflow-hidden hover:shadow-xl transition-all duration-300 group`}
+                  >
+                    {relatedPost.featuredImage && (
+                      <div className="aspect-video overflow-hidden">
+                        <img
+                          src={relatedPost.featuredImage.url}
+                          alt={relatedPost.featuredImage.alt}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                    <div className="p-6">
+                      <h3 className={`text-xl font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-900'} group-hover:text-purple-600 transition-colors`}>
+                        {relatedPost.title}
+                      </h3>
+                      <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'} mb-4 line-clamp-3`}>
+                        {relatedPost.excerpt}
+                      </p>
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <div className="flex items-center">
+                          <Calendar className="w-4 h-4 mr-1" />
+                          {relatedPost.publishedAt.toLocaleDateString('ko-KR')}
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="w-4 h-4 mr-1" />
+                          {relatedPost.readingTime}분
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
-
-        {/* FAQ Section */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-              자주 묻는 질문
-            </h2>
-            <div className="space-y-6">
-              {defaultFAQs.map((faq, index) => (
-                <HighlightBox key={index} variant="secondary" title={faq.question}>
-                  <p className="text-gray-700">{faq.answer}</p>
-                </HighlightBox>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Navigation */}
-        <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-              <Link 
-                href="/" 
-                className="text-primary-600 hover:text-primary-700 transition-colors"
-              >
-                ← 홈으로 돌아가기
-              </Link>
-              <PrimaryButton href="/programs" variant="outline">
-                프로그램 둘러보기
-              </PrimaryButton>
-            </div>
-          </div>
-        </section>
-      </article>
-    </>
+      )}
+    </div>
   );
-} 
+}
