@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Search, HelpCircle, MessageCircle, Clock, Users, Bot } from 'lucide-react';
+import { ChevronDown, Search, HelpCircle, MessageCircle, Clock, Users, Bot, ArrowRight } from 'lucide-react';
 import { faqData, FAQ } from '@/lib/faq-data';
 import DropdownNavigation from '@/components/DropdownNavigation';
 import { useTheme } from '@/contexts/ThemeContext';

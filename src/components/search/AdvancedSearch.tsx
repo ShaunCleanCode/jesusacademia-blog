@@ -102,8 +102,8 @@ export const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   ).map(id => posts.flatMap(p => p.tags).find(t => t.id === id)!);
 
   const uniqueAuthors = Array.from(
-    new Set(posts.map(p => p.author.id))
-  ).map(id => posts.find(p => p.author.id === id)!.author);
+    new Set(posts.map(p => p.author?.id).filter(Boolean))
+  ).map(id => posts.find(p => p.author?.id === id)?.author).filter(Boolean);
 
   return (
     <div className={`relative ${className}`}>

@@ -147,12 +147,12 @@ export default function BlogPageClient() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <img
-                            src={post.author.avatar?.url || '/images/default-avatar.jpg'}
-                            alt={post.author.name}
+                            src={post.author?.avatar || '/images/default-avatar.jpg'}
+                            alt={post.author?.name || '작성자'}
                             className="w-8 h-8 rounded-full object-cover"
                           />
                           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {post.author.name}
+                            {post.author?.name || '작성자'}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -167,15 +167,18 @@ export default function BlogPageClient() {
 
                       {/* Tags */}
                       <div className="mt-4 flex flex-wrap gap-2">
-                        {post.tags.slice(0, 3).map(tag => (
+                        {post.tags?.slice(0, 3).map(tag => (
                           <span
-                            key={tag.id}
+                            key={tag?.id || Math.random()}
                             className="px-2 py-1 text-xs font-medium rounded-full"
-                            style={{ backgroundColor: tag.color + '20', color: tag.color }}
+                            style={{ 
+                              backgroundColor: (tag?.color || '#6B7280') + '20', 
+                              color: tag?.color || '#6B7280' 
+                            }}
                           >
-                            {tag.name}
+                            {tag?.name || '태그'}
                           </span>
-                        ))}
+                        )) || []}
                       </div>
                     </div>
                   </motion.div>

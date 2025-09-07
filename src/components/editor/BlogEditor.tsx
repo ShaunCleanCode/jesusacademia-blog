@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-import { lowlight } from 'lowlight';
+import { createLowlight } from 'lowlight';
 import { BlogEditorToolbar } from './BlogEditorToolbar';
 import { BlogImageUpload } from './BlogImageUpload';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -27,6 +27,12 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const [isUploading, setIsUploading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // 클라이언트 사이드에서만 마운트되도록 설정
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const editor = useEditor({
     extensions: [
@@ -45,13 +51,14 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({
         },
       }),
       CodeBlockLowlight.configure({
-        lowlight,
+        lowlight: createLowlight(),
         HTMLAttributes: {
           class: 'bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto',
         },
       }),
     ],
     content: initialContent,
+    immediatelyRender: false, // SSR 호환성을 위해 추가
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       onContentChange?.(html);
@@ -64,7 +71,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({
         placeholder,
       },
     },
-  });
+  }, [isMounted, initialContent, onContentChange, isDark, className, placeholder]);
 
   const handleImageUpload = useCallback(async (file: File) => {
     if (!editor) return;
@@ -88,7 +95,8 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({
     }
   }, [editor]);
 
-  if (!editor) {
+  // SSR에서는 로딩 스켈레톤만 표시
+  if (typeof window === 'undefined' || !isMounted || !editor) {
     return (
       <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-2xl border ${isDark ? 'border-gray-700' : 'border-gray-200'} p-8`}>
         <div className="animate-pulse">

@@ -42,13 +42,6 @@ const nextConfig: NextConfig = {
       );
     }
 
-    // 트리 셰이킹 최적화
-    config.optimization = {
-      ...config.optimization,
-      usedExports: true,
-      sideEffects: false,
-    };
-
     return config;
   },
 

@@ -74,7 +74,7 @@ export const generateBlogStructuredData = (posts: BlogPost[]) => {
       "datePublished": post.publishedAt,
       "author": {
         "@type": "Person",
-        "name": post.author.name
+        "name": post.author?.name || "예수서원"
       }
     }))
   };
