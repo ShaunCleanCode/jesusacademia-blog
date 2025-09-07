@@ -1,15 +1,9 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, Clock, Eye, Heart, ArrowLeft, Share2, BookOpen, User, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
+import React from 'react';
 import { getBlogPostBySlug, getRelatedPosts } from '@/lib/blog/data';
 import { BlogPost } from '@/lib/blog/types';
-import { useTheme } from '@/contexts/ThemeContext';
-import DropdownNavigation from '@/components/DropdownNavigation';
-import { MarkdownRenderer, TableOfContents } from '@/lib/markdown/renderer';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { generateBlogPostMetadata } from '@/lib/seo/metadata';
+import { generateBlogPostStructuredData, generateBreadcrumbStructuredData } from '@/lib/seo/structured-data';
+import BlogPostClient from './BlogPostClient';
 
 interface BlogPostPageProps {
   params: {
@@ -17,349 +11,66 @@ interface BlogPostPageProps {
   };
 }
 
-export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-  const router = useRouter();
+export async function generateMetadata({ params }: BlogPostPageProps) {
+  const post = getBlogPostBySlug(params.slug);
   
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const foundPost = getBlogPostBySlug(params.slug);
-    if (foundPost) {
-      setPost(foundPost);
-      setRelatedPosts(getRelatedPosts(foundPost, 3));
-    }
-    setIsLoading(false);
-  }, [params.slug]);
-
-  if (isLoading) {
-    return (
-      <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-white'} flex items-center justify-center`}>
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
-      </div>
-    );
+  if (!post) {
+    return {
+      title: '포스트를 찾을 수 없습니다',
+      description: '요청하신 포스트가 존재하지 않습니다.',
+    };
   }
 
+  return generateBlogPostMetadata(post);
+}
+
+export default function BlogPostPage({ params }: BlogPostPageProps) {
+  const post = getBlogPostBySlug(params.slug);
+  
   if (!post) {
     return (
-      <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-white'} flex items-center justify-center`}>
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <h1 className={`text-4xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <h1 className="text-2xl font-bold mb-4 text-gray-900">
             포스트를 찾을 수 없습니다
           </h1>
-          <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-8`}>
-            요청하신 블로그 포스트가 존재하지 않습니다.
+          <p className="text-gray-600 mb-6">
+            요청하신 포스트가 존재하지 않거나 삭제되었습니다.
           </p>
-          <Link
+          <a
             href="/blog"
-            className="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors"
+            className="px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
             블로그로 돌아가기
-          </Link>
+          </a>
         </div>
       </div>
     );
   }
 
-  // TOC 생성
-  const [toc, setToc] = useState<Array<{id: string, text: string, level: number}>>([]);
-
-  useEffect(() => {
-    if (post) {
-      // 간단한 TOC 생성 (실제로는 generateTOC 함수 사용)
-      const lines = post.content.split('\n');
-      const tocItems: Array<{id: string, text: string, level: number}> = [];
-      
-      lines.forEach(line => {
-        const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
-        if (headingMatch) {
-          const level = headingMatch[1].length;
-          const text = headingMatch[2].trim();
-          const id = text
-            .toLowerCase()
-            .replace(/[^\w\s-]/g, '')
-            .replace(/\s+/g, '-')
-            .trim();
-          
-          tocItems.push({ id, text, level });
-        }
-      });
-      
-      setToc(tocItems);
-    }
-  }, [post]);
+  const relatedPosts = getRelatedPosts(post.id, 3);
+  
+  // 구조화 데이터 생성
+  const structuredData = generateBlogPostStructuredData(post);
+  const breadcrumbData = generateBreadcrumbStructuredData([
+    { name: '홈', url: 'https://jesusacademia.org' },
+    { name: '블로그', url: 'https://jesusacademia.org/blog' },
+    { name: post.title, url: `https://jesusacademia.org/blog/${post.slug}` }
+  ]);
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
-      <DropdownNavigation />
-
-      {/* Hero Section */}
-      <section className={`${isDark ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black' : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'} text-white py-20`}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            {/* Back Button */}
-            <button
-              onClick={() => router.back()}
-              className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-8"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              뒤로 가기
-            </button>
-
-            {/* Categories */}
-            <div className="flex flex-wrap gap-2 mb-6">
-              {post.categories.map(category => (
-                <span
-                  key={category.id}
-                  className="px-4 py-2 text-sm font-medium rounded-full"
-                  style={{ 
-                    backgroundColor: `${category.color}20`,
-                    color: category.color
-                  }}
-                >
-                  {category.icon} {category.name}
-                </span>
-              ))}
-            </div>
-
-            {/* Title */}
-            <h1 className="text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              {post.title}
-            </h1>
-
-            {/* Excerpt */}
-            <p className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-700'} max-w-3xl leading-relaxed mb-8`}>
-              {post.excerpt}
-            </p>
-
-            {/* Meta Info */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400">
-              <div className="flex items-center">
-                <User className="w-5 h-5 mr-2 text-blue-400" />
-                <span>{post.author.name}</span>
-              </div>
-              <div className="flex items-center">
-                <Calendar className="w-5 h-5 mr-2 text-blue-400" />
-                <span>{post.publishedAt.toLocaleDateString('ko-KR')}</span>
-              </div>
-              <div className="flex items-center">
-                <Clock className="w-5 h-5 mr-2 text-blue-400" />
-                <span>{post.readingTime}분 읽기</span>
-              </div>
-              <div className="flex items-center">
-                <Eye className="w-5 h-5 mr-2 text-blue-400" />
-                <span>{post.viewCount}회 조회</span>
-              </div>
-              <div className="flex items-center">
-                <Heart className="w-5 h-5 mr-2 text-blue-400" />
-                <span>{post.likeCount}개 좋아요</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Featured Image */}
-      {post.featuredImage && (
-        <section className={`${isDark ? 'bg-gray-900' : 'bg-white'} py-8`}>
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative overflow-hidden rounded-2xl shadow-2xl"
-            >
-              <img
-                src={post.featuredImage.url}
-                alt={post.featuredImage.alt}
-                className="w-full h-96 object-cover"
-              />
-              {post.featuredImage.caption && (
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-                  <p className="text-white text-sm">{post.featuredImage.caption}</p>
-                </div>
-              )}
-            </motion.div>
-          </div>
-        </section>
-      )}
-
-      {/* Content */}
-      <section className={`${isDark ? 'bg-gray-900' : 'bg-white'} py-20`}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-4 gap-8">
-            {/* Main Content */}
-            <div className="lg:col-span-3">
-              <motion.article
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                <MarkdownRenderer 
-                  content={post.content}
-                  className={`${isDark ? 'prose-invert' : ''}`}
-                />
-              </motion.article>
-
-              {/* Tags */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700"
-              >
-                <div className="flex items-center mb-4">
-                  <Tag className="w-5 h-5 mr-2 text-purple-600" />
-                  <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    태그
-                  </h3>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {post.tags.map(tag => (
-                    <span
-                      key={tag.id}
-                      className="px-3 py-1 text-sm font-medium rounded-full text-white"
-                      style={{ backgroundColor: tag.color }}
-                    >
-                      {tag.name}
-                    </span>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* Share Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Share2 className="w-5 h-5 mr-2 text-purple-600" />
-                    <span className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      공유하기
-                    </span>
-                  </div>
-                  <div className="flex space-x-3">
-                    <button className="p-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
-                      Facebook
-                    </button>
-                    <button className="p-2 bg-blue-400 text-white rounded-xl hover:bg-blue-500 transition-colors">
-                      Twitter
-                    </button>
-                    <button className="p-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors">
-                      WhatsApp
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Sidebar */}
-            <div className="lg:col-span-1">
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="space-y-6"
-              >
-                {/* Author Card */}
-                <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-6 shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
-                  <div className="flex items-center mb-4">
-                    <img
-                      src={post.author.avatar}
-                      alt={post.author.name}
-                      className="w-12 h-12 rounded-full mr-4"
-                    />
-                    <div>
-                      <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        {post.author.name}
-                      </h3>
-                      <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                        작성자
-                      </p>
-                    </div>
-                  </div>
-                  <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
-                    {post.author.bio}
-                  </p>
-                </div>
-
-                {/* Table of Contents */}
-                <TableOfContents 
-                  toc={toc}
-                  className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-6 shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}
-                />
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Related Posts */}
-      {relatedPosts.length > 0 && (
-        <section className={`${isDark ? 'bg-gray-800' : 'bg-gray-50'} py-20`}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-            >
-              <h2 className={`text-3xl font-bold text-center mb-12 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                관련 포스트
-              </h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {relatedPosts.map((relatedPost, index) => (
-                  <motion.div
-                    key={relatedPost.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.7 + index * 0.1 }}
-                    className={`${isDark ? 'bg-gray-900' : 'bg-white'} rounded-2xl shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'} overflow-hidden hover:shadow-xl transition-all duration-300 group`}
-                  >
-                    {relatedPost.featuredImage && (
-                      <div className="aspect-video overflow-hidden">
-                        <img
-                          src={relatedPost.featuredImage.url}
-                          alt={relatedPost.featuredImage.alt}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    )}
-                    <div className="p-6">
-                      <h3 className={`text-xl font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-900'} group-hover:text-purple-600 transition-colors`}>
-                        {relatedPost.title}
-                      </h3>
-                      <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'} mb-4 line-clamp-3`}>
-                        {relatedPost.excerpt}
-                      </p>
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <div className="flex items-center">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          {relatedPost.publishedAt.toLocaleDateString('ko-KR')}
-                        </div>
-                        <div className="flex items-center">
-                          <Clock className="w-4 h-4 mr-1" />
-                          {relatedPost.readingTime}분
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </section>
-      )}
-    </div>
+    <>
+      {/* 구조화 데이터 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
+      
+      <BlogPostClient post={post} relatedPosts={relatedPosts} />
+    </>
   );
 }

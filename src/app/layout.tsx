@@ -5,13 +5,11 @@ import "./globals.css";
 import { NavigationProvider } from "@/contexts/NavigationContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import ChatbotProvider from "@/components/ChatbotProvider";
+import { defaultMetadata } from "@/lib/seo/metadata";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "예수서원 - 복음과 지성의 통합",
-  description: "뉴욕에서 시작한 기독교 인문학 아카데미",
-};
+export const metadata: Metadata = defaultMetadata;
 
 export default function RootLayout({
   children,
