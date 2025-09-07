@@ -5,6 +5,7 @@ import "./globals.css";
 import { NavigationProvider } from "@/contexts/NavigationContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import ChatbotProvider from "@/components/ChatbotProvider";
+import { PerformanceMonitorToggle } from "@/components/optimized/PerformanceMonitor";
 import { defaultMetadata } from "@/lib/seo/metadata";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,6 +24,7 @@ export default function RootLayout({
           <NavigationProvider>
             <ChatbotProvider>
               {children}
+              <PerformanceMonitorToggle />
             </ChatbotProvider>
           </NavigationProvider>
         </ThemeProvider>
