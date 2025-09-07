@@ -28,6 +28,12 @@ const navItems: NavItem[] = [
     description: '자주 묻는 질문'
   },
   {
+    name: '관리자',
+    href: '/admin/dashboard',
+    icon: Settings,
+    description: '관리자 대시보드'
+  },
+  {
     name: '챗봇 관리',
     href: '/admin/chatbot',
     icon: Settings,
