@@ -7,6 +7,7 @@ import { getBlogPostBySlug, getRelatedPosts } from '@/lib/blog/data';
 import { BlogPost } from '@/lib/blog/types';
 import { useTheme } from '@/contexts/ThemeContext';
 import DropdownNavigation from '@/components/DropdownNavigation';
+import { MarkdownRenderer, TableOfContents } from '@/lib/markdown/renderer';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -64,19 +65,33 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
     );
   }
 
-  // Markdown을 HTML로 변환하는 간단한 함수 (실제로는 remark 사용)
-  const renderContent = (content: string) => {
-    return content
-      .replace(/^# (.*$)/gim, '<h1 class="text-4xl font-bold mb-6 text-gray-900 dark:text-white">$1</h1>')
-      .replace(/^## (.*$)/gim, '<h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">$1</h2>')
-      .replace(/^### (.*$)/gim, '<h3 class="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">$1</h3>')
-      .replace(/^\- (.*$)/gim, '<li class="ml-4">$1</li>')
-      .replace(/\*\*(.*)\*\*/gim, '<strong class="font-bold">$1</strong>')
-      .replace(/\*(.*)\*/gim, '<em class="italic">$1</em>')
-      .replace(/\n\n/gim, '</p><p class="mb-4">')
-      .replace(/^(?!<[h|l])/gim, '<p class="mb-4">')
-      .replace(/(<li.*<\/li>)/gim, '<ul class="list-disc ml-6 mb-4">$1</ul>');
-  };
+  // TOC 생성
+  const [toc, setToc] = useState<Array<{id: string, text: string, level: number}>>([]);
+
+  useEffect(() => {
+    if (post) {
+      // 간단한 TOC 생성 (실제로는 generateTOC 함수 사용)
+      const lines = post.content.split('\n');
+      const tocItems: Array<{id: string, text: string, level: number}> = [];
+      
+      lines.forEach(line => {
+        const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
+        if (headingMatch) {
+          const level = headingMatch[1].length;
+          const text = headingMatch[2].trim();
+          const id = text
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .trim();
+          
+          tocItems.push({ id, text, level });
+        }
+      });
+      
+      setToc(tocItems);
+    }
+  }, [post]);
 
   return (
     <div className={`min-h-screen ${isDark ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
@@ -187,13 +202,12 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className={`prose prose-lg max-w-none ${
-                  isDark 
-                    ? 'prose-invert prose-gray' 
-                    : 'prose-gray'
-                }`}
-                dangerouslySetInnerHTML={{ __html: renderContent(post.content) }}
-              />
+              >
+                <MarkdownRenderer 
+                  content={post.content}
+                  className={`${isDark ? 'prose-invert' : ''}`}
+                />
+              </motion.article>
 
               {/* Tags */}
               <motion.div
@@ -281,25 +295,10 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
                 </div>
 
                 {/* Table of Contents */}
-                <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-6 shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
-                  <div className="flex items-center mb-4">
-                    <BookOpen className="w-5 h-5 mr-2 text-purple-600" />
-                    <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      목차
-                    </h3>
-                  </div>
-                  <div className="space-y-2">
-                    <a href="#intro" className={`block text-sm ${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors`}>
-                      들어가며
-                    </a>
-                    <a href="#main" className={`block text-sm ${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors`}>
-                      본문
-                    </a>
-                    <a href="#conclusion" className={`block text-sm ${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors`}>
-                      결론
-                    </a>
-                  </div>
-                </div>
+                <TableOfContents 
+                  toc={toc}
+                  className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-6 shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}
+                />
               </motion.div>
             </div>
           </div>
