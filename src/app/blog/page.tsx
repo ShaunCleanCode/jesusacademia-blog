@@ -2,11 +2,12 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, Calendar, Clock, Eye, Heart, BookOpen, Users, Tag, Bot } from 'lucide-react';
+import { Calendar, Clock, Eye, Heart, BookOpen, Users, Tag, Bot } from 'lucide-react';
 import { sampleBlogPosts, sampleCategories, sampleTags } from '@/lib/blog/data';
-import { BlogPost, BlogFilters, BlogSortOptions } from '@/lib/blog/types';
+import { BlogPost } from '@/lib/blog/types';
 import { useTheme } from '@/contexts/ThemeContext';
 import DropdownNavigation from '@/components/DropdownNavigation';
+import { AdvancedSearch } from '@/components/search/AdvancedSearch';
 
 export default function BlogPage() {
   const { theme } = useTheme();
@@ -14,81 +15,20 @@ export default function BlogPage() {
   
   // 상태 관리
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [selectedTag, setSelectedTag] = useState<string>('');
-  const [sortBy, setSortBy] = useState<BlogSortOptions>({
-    field: 'publishedAt',
-    order: 'desc'
-  });
+  const [displayedPosts, setDisplayedPosts] = useState<BlogPost[]>(sampleBlogPosts);
 
-  // 필터링 및 정렬된 포스트
-  const filteredPosts = useMemo(() => {
-    let filtered = sampleBlogPosts.filter(post => {
-      // 검색어 필터
-      if (searchQuery) {
-        const searchLower = searchQuery.toLowerCase();
-        const matchesSearch = 
-          post.title.toLowerCase().includes(searchLower) ||
-          post.excerpt.toLowerCase().includes(searchLower) ||
-          post.content.toLowerCase().includes(searchLower) ||
-          post.author.name.toLowerCase().includes(searchLower) ||
-          post.tags.some(tag => tag.name.toLowerCase().includes(searchLower));
-        
-        if (!matchesSearch) return false;
-      }
-
-      // 카테고리 필터
-      if (selectedCategory) {
-        const hasCategory = post.categories.some(cat => cat.slug === selectedCategory);
-        if (!hasCategory) return false;
-      }
-
-      // 태그 필터
-      if (selectedTag) {
-        const hasTag = post.tags.some(tag => tag.slug === selectedTag);
-        if (!hasTag) return false;
-      }
-
-      return true;
-    });
-
-    // 정렬
-    filtered.sort((a, b) => {
-      let aValue: any, bValue: any;
-      
-      switch (sortBy.field) {
-        case 'publishedAt':
-        case 'updatedAt':
-          aValue = a[sortBy.field].getTime();
-          bValue = b[sortBy.field].getTime();
-          break;
-        case 'viewCount':
-        case 'likeCount':
-        case 'readingTime':
-          aValue = a[sortBy.field];
-          bValue = b[sortBy.field];
-          break;
-        default:
-          return 0;
-      }
-
-      if (sortBy.order === 'asc') {
-        return aValue - bValue;
-      } else {
-        return bValue - aValue;
-      }
-    });
-
-    return filtered;
-  }, [searchQuery, selectedCategory, selectedTag, sortBy]);
-
-  // 필터 초기화
-  const clearFilters = () => {
-    setSearchQuery('');
-    setSelectedCategory('');
-    setSelectedTag('');
-    setSortBy({ field: 'publishedAt', order: 'desc' });
+  // 고급 검색 결과 처리
+  const handleSearchResults = (results: BlogPost[]) => {
+    setDisplayedPosts(results);
   };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  // 표시할 포스트 (고급 검색에서 이미 필터링됨)
+  const filteredPosts = displayedPosts;
+
 
   return (
     <div className={`min-h-screen ${isDark ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
@@ -140,113 +80,19 @@ export default function BlogPage() {
           <div className="grid lg:grid-cols-4 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-3">
-              {/* Search and Filters */}
+              {/* 고급 검색 */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
                 className="mb-8"
               >
-                <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-6 shadow-lg border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
-                  {/* Search Bar */}
-                  <div className="relative mb-6">
-                    <Search className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${isDark ? 'text-gray-400' : 'text-gray-500'} w-5 h-5`} />
-                    <input
-                      type="text"
-                      placeholder="포스트 검색..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className={`w-full pl-12 pr-4 py-3 border rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 ${
-                        isDark 
-                          ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                          : 'border-gray-300 text-gray-900 placeholder-gray-500'
-                      }`}
-                    />
-                  </div>
+                <AdvancedSearch
+                  posts={sampleBlogPosts}
+                  onSearchResults={handleSearchResults}
+                  onSearchChange={handleSearchChange}
+                />
 
-                  {/* Filters */}
-                  <div className="grid md:grid-cols-3 gap-4 mb-4">
-                    {/* Category Filter */}
-                    <div>
-                      <label className={`block text-sm font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        카테고리
-                      </label>
-                      <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                          isDark 
-                            ? 'bg-gray-700 border-gray-600 text-white' 
-                            : 'border-gray-300 text-gray-900'
-                        }`}
-                      >
-                        <option value="">모든 카테고리</option>
-                        {sampleCategories.map(category => (
-                          <option key={category.id} value={category.slug}>
-                            {category.icon} {category.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Tag Filter */}
-                    <div>
-                      <label className={`block text-sm font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        태그
-                      </label>
-                      <select
-                        value={selectedTag}
-                        onChange={(e) => setSelectedTag(e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                          isDark 
-                            ? 'bg-gray-700 border-gray-600 text-white' 
-                            : 'border-gray-300 text-gray-900'
-                        }`}
-                      >
-                        <option value="">모든 태그</option>
-                        {sampleTags.map(tag => (
-                          <option key={tag.id} value={tag.slug}>
-                            {tag.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Sort */}
-                    <div>
-                      <label className={`block text-sm font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        정렬
-                      </label>
-                      <select
-                        value={`${sortBy.field}-${sortBy.order}`}
-                        onChange={(e) => {
-                          const [field, order] = e.target.value.split('-');
-                          setSortBy({ field: field as any, order: order as any });
-                        }}
-                        className={`w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                          isDark 
-                            ? 'bg-gray-700 border-gray-600 text-white' 
-                            : 'border-gray-300 text-gray-900'
-                        }`}
-                      >
-                        <option value="publishedAt-desc">최신순</option>
-                        <option value="publishedAt-asc">오래된순</option>
-                        <option value="viewCount-desc">조회수순</option>
-                        <option value="likeCount-desc">좋아요순</option>
-                        <option value="readingTime-asc">읽기시간순</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Clear Filters */}
-                  {(searchQuery || selectedCategory || selectedTag) && (
-                    <button
-                      onClick={clearFilters}
-                      className="text-sm text-purple-600 hover:text-purple-700 font-medium"
-                    >
-                      필터 초기화
-                    </button>
-                  )}
                 </div>
               </motion.div>
 
